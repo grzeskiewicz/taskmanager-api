@@ -1,6 +1,8 @@
 require('dotenv').config();
 require('./database/User');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+    bcrypt = require('bcrypt'),
+    SALT_WORK_FACTOR = 10;
 var express = require('express'),
     app = express();
 var cors = require('cors');
@@ -79,31 +81,35 @@ app.get('/getusers', (req, res) => {
 });
 
 /*
-app.post('/getnotesdate', [
-        body('date')
-        .isLength({ min: 1 })
-        .withMessage('Please put content'),
-    ],
-    (req, res) => {
-        console.log("HEHEHE");
-        const errors = validationResult(req);
-        if (errors.isEmpty()) {
-            const datebody = req.body.date;
-            const dayBeginning = new Date(datebody);
-            const dayEnd=new Date(dayBeginning.getTime()+60 * 60 * 24 * 1000);
-            Note.find()
-            .where('date').gt(dayBeginning).lt(dayEnd)
-                .then((notes) => {
-                    res.json(notes)
-                    console.log(notes);
-                })
-                .catch(() => { res.json({ 'msg': 'Sorry! Something went wrong.' }); });
+// create a user a new user
+var testUser = new User({
+    username: 'jmar777',
+    password: 'Password123';
+});
 
-        } else {
-            res.send('Chuj!');
-        }
-    }
-); */
+// save user to database
+testUser.save(function(err) {
+    if (err) throw err;
+});
+
+
+User.findOne({ username: 'jmar777' }, function(err, user) {
+    if (err) throw err;
+
+    // test a matching password
+    user.comparePassword('Password123', function(err, isMatch) {
+        if (err) throw err;
+        console.log('Password123:', isMatch); // -&gt; Password123: true
+    });
+
+    // test a failing password
+    user.comparePassword('123Password', function(err, isMatch) {
+        if (err) throw err;
+        console.log('123Password:', isMatch); // -&gt; 123Password: false
+    });
+});
+
+*/
 
 
 const server = app.listen(3005, () => {
