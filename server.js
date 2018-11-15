@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('./database/Note');
+require('./database/User');
 const mongoose = require('mongoose');
 var express = require('express'),
     app = express();
@@ -43,29 +43,23 @@ app.get('/', function(req, res) {
 });
 
 
-app.post('/savenotes', [
-        body('content')
+app.post('/createuser', [
+        body('username')
         .isLength({ min: 1 })
         .withMessage('Please put content'),
     ],
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
-            const notes = JSON.parse(req.body.content);
+            //  const notes = JSON.parse(req.body.content);
             const date = new Date();
-            let i = 0;
-            notes.forEach(note => {
-                i++;
-                const noteM = new Note({ 'content': note, 'date': date });
-                noteM.save()
-                    .then(() => {})
-                    .catch(() => { res.json({ 'msg': 'Sorry! Something went wrong.' }); });
-                if (notes.length === i) {
-                    res.json({ 'msg': 'Saved...' });
-                }
 
-            });
-            console.log('Koniec');
+            const user = new Note({ 'username': username, 'password': password, 'date': date });
+            user.save()
+                .then(() => {
+                    res.json({ 'success': true, 'msg': 'Saved' })
+                })
+                .catch(() => { res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' }); });
 
         } else {
             res.send('Chuj!');
@@ -75,16 +69,16 @@ app.post('/savenotes', [
 
 
 
-app.get('/getnotes', (req, res) => {
-    Note.find()
-        .then((notes) => {
-            res.json(notes)
-            console.log(notes);
+app.get('/getusers', (req, res) => {
+    User.find()
+        .then((users) => {
+            res.json(users)
+            console.log(users);
         })
         .catch(() => { res.json({ 'msg': 'Sorry! Something went wrong.' }); });
 });
 
-
+/*
 app.post('/getnotesdate', [
         body('date')
         .isLength({ min: 1 })
@@ -109,16 +103,9 @@ app.post('/getnotesdate', [
             res.send('Chuj!');
         }
     }
-);
+); */
 
 
-
-/*
-var port = process.env.PORT || 8080,
-    ip = process.env.IP || '0.0.0.0';
-
-http.listen(port, ip);
-console.log('Server running on http://%s:%s', ip, port);*/
 const server = app.listen(3005, () => {
     console.log(`Express is running on port ${server.address().port}`);
 });
