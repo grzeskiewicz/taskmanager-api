@@ -1,8 +1,6 @@
 require('dotenv').config();
 require('./database/User');
-const mongoose = require('mongoose'),
-    bcrypt = require('bcrypt'),
-    SALT_WORK_FACTOR = 10;
+const mongoose = require('mongoose');
 var express = require('express'),
     app = express();
 var cors = require('cors');
@@ -13,7 +11,7 @@ const path = require('path');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies 
-const Note = mongoose.model('Note');
+const User = mongoose.model('User');
 const auth = require('http-auth');
 
 const basic = auth.basic({
@@ -29,8 +27,7 @@ mongoose.connection
         console.log(`Mongoose connection open on ${process.env.DATABASE}`);
     })
     .on('error', (err) => {
-        console.log('error'
-            `Connection error: ${err.message}`);
+        console.log(`Connection error: ${err.message}`);
     });
 
 
@@ -53,15 +50,16 @@ app.post('/createuser', [
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
-            //  const notes = JSON.parse(req.body.content);
+              const data = req.body;
             const date = new Date();
 
-            const user = new Note({ 'username': username, 'password': password, 'date': date });
+            const user = new User({ 'username': data.username, 'password': data.password, 'date': date , 'role' : data.role});
+            console.log(user);
             user.save()
                 .then(() => {
                     res.json({ 'success': true, 'msg': 'Saved' })
                 })
-                .catch(() => { res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' }); });
+                .catch((err) => { console.log(err);res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' }); });
 
         } else {
             res.send('Chuj!');
