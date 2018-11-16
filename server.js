@@ -50,16 +50,19 @@ app.post('/createuser', [
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
-              const data = req.body;
+            const data = req.body;
             const date = new Date();
 
-            const user = new User({ 'username': data.username, 'password': data.password, 'date': date , 'role' : data.role});
+            const user = new User({ 'username': data.username, 'password': data.password, 'date': date, 'role': data.role });
             console.log(user);
             user.save()
                 .then(() => {
                     res.json({ 'success': true, 'msg': 'Saved' })
                 })
-                .catch((err) => { console.log(err);res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' }); });
+                .catch((err) => {
+                    console.log(err);
+                    res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' });
+                });
 
         } else {
             res.send('Chuj!');
@@ -78,36 +81,39 @@ app.get('/getusers', (req, res) => {
         .catch(() => { res.json({ 'msg': 'Sorry! Something went wrong.' }); });
 });
 
-/*
-// create a user a new user
-var testUser = new User({
-    username: 'jmar777',
-    password: 'Password123';
-});
 
-// save user to database
-testUser.save(function(err) {
-    if (err) throw err;
-});
+app.post('/authuser', [
+        body('username')
+        .isLength({ min: 1 })
+        .withMessage('Please put content'),
+    ],
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const data = req.body;
+            User.findOne({ username: data.username }, function(err, user) {
+                if (err) throw err;
+                // test a matching password
+                user.comparePassword(data.password, function(err, isMatch) {
+                    if (err) throw err;
+                    console.log(data.password, isMatch); // -&gt; Password123: true
+                });
+                // test a failing password
+                user.comparePassword(data.password, function(err, isMatch) {
+                    if (err) throw err;
+                    console.log(data.password, isMatch); // -&gt; 123Password: false
+                });
+            });
+
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
 
 
-User.findOne({ username: 'jmar777' }, function(err, user) {
-    if (err) throw err;
 
-    // test a matching password
-    user.comparePassword('Password123', function(err, isMatch) {
-        if (err) throw err;
-        console.log('Password123:', isMatch); // -&gt; Password123: true
-    });
 
-    // test a failing password
-    user.comparePassword('123Password', function(err, isMatch) {
-        if (err) throw err;
-        console.log('123Password:', isMatch); // -&gt; 123Password: false
-    });
-});
-
-*/
 
 
 const server = app.listen(3005, () => {
