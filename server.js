@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('./database/User');
+var jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 var express = require('express'),
     app = express();
@@ -91,17 +92,13 @@ app.post('/authuser', [
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const data = req.body;
+            console.log(data);
             User.findOne({ username: data.username }, function(err, user) {
                 if (err) throw err;
                 // test a matching password
                 user.comparePassword(data.password, function(err, isMatch) {
                     if (err) throw err;
-                    console.log(data.password, isMatch); // -&gt; Password123: true
-                });
-                // test a failing password
-                user.comparePassword(data.password, function(err, isMatch) {
-                    if (err) throw err;
-                    console.log(data.password, isMatch); // -&gt; 123Password: false
+                    if (isMatch) res.json({ success: true, msg: 'Credentials are ok', token: 'JWT ' + jwt.sign({ username: user.username, id: user._id }, 'RESTFULAPIs') });
                 });
             });
 
@@ -110,6 +107,34 @@ app.post('/authuser', [
         }
     }
 );
+
+
+app.get('/memberinfo', (req,res) => {
+    if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
+            console.log("DECODE: ");
+            console.log(decode);
+            if (err) req.user = undefined;
+            if (decode === undefined) {
+                res.json({ success: false, msg: "No token" });
+            }
+
+            User.findOne({ username: decode.username }, function(err, user) {
+                if (err) throw err;
+                if (user) {
+                    res.json({ success: true, msg: decode.email });
+                } else {
+                    res.json({ success: false, msg: "No such user registered" });
+                }
+
+            });
+            req.user = decode; //?
+        });
+    } else {
+        res.json({ success: false, msg: "Token not provided" });
+        req.user = undefined;
+    }
+});
 
 
 
