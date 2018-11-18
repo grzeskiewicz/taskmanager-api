@@ -87,6 +87,9 @@ app.post('/authuser', [
         body('username')
         .isLength({ min: 1 })
         .withMessage('Please put content'),
+        body('password')
+        .isLength({ min: 1 })
+        .withMessage('Please put content')
     ],
     (req, res) => {
         const errors = validationResult(req);
@@ -109,7 +112,7 @@ app.post('/authuser', [
 );
 
 
-app.get('/memberinfo', (req,res) => {
+app.get('/memberinfo', (req, res) => {
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
         jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
             console.log("DECODE: ");
