@@ -6,10 +6,16 @@ var express = require('express'),
     app = express();
 var cors = require('cors');
 var http = require('http').Server(app);
+var io = require('socket.io')(http);
 const { body, validationResult } = require('express-validator/check');
 var bodyParser = require('body-parser');
 const path = require('path');
-app.use(cors());
+var corsOptions = {  //for reacts js 
+  origin: 'http://localhost:3000',
+  credentials:true,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies 
 const User = mongoose.model('User');
@@ -141,7 +147,18 @@ app.get('/memberinfo', (req, res) => {
 
 
 
+io.on('connection', function(socket) {
+    socket.broadcast.emit('hi');
+    console.log('a user connected');
+    socket.on('disconnect', function() {
+        console.log('user disconnected');
+    });
 
+    socket.on('ticketordered', function(ticket) {
+        console.log('message: ' + ticket);
+        io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
+    });
+});
 
 
 const server = app.listen(3005, () => {
