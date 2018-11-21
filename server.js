@@ -161,8 +161,11 @@ io.on('connection', function(socket) {
 });
 
 
-const server = app.listen(3005, () => {
-    console.log(`Express is running on port ${server.address().port}`);
-});
+
+var port = process.env.PORT || 8080,
+    ip = process.env.IP || '0.0.0.0';
+
+http.listen(port, ip);
+console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app;
