@@ -149,7 +149,7 @@ app.get('/memberinfo', (req, res) => {
 
 io.on('connection', function(socket) {
     socket.broadcast.emit('test',{msg: 'pykło tak sobie'});
-    io.emit('test',{msg:'pykykyk', socket:socket});
+    io.emit('test',{msg:'pykykyk'});
     console.log('a user connected');
     socket.on('disconnect', function() {
         console.log('user disconnected');
