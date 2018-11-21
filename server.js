@@ -156,6 +156,10 @@ io.on('connection', function(socket) {
         console.log('user disconnected');
     });
 
+    socket.on('test1', function(msg) {
+        console.log('message: ' + msg);
+        //io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
+    });
     socket.on('ticketordered', function(ticket) {
         console.log('message: ' + ticket);
         io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
