@@ -148,8 +148,8 @@ app.get('/memberinfo', (req, res) => {
 
 
 io.on('connection', function(socket) {
-    socket.broadcast.emit('test',{msg: 'pykło tak sobie'});
-    io.emit('test',{msg:'pykykyk'});
+    socket.broadcast.emit('test', { msg: 'pykło tak sobie' });
+    io.emit('test', { msg: 'pykykyk' });
     console.log('a user connected');
     socket.on('disconnect', function() {
         console.log('user disconnected');
@@ -157,8 +157,12 @@ io.on('connection', function(socket) {
 
     socket.on('test1', function(msg) {
         console.log('message: ' + msg);
-        //io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
     });
+
+    socket.on('logged', function(user) {
+        console.log('username: ' + user);
+    });
+
     socket.on('ticketordered', function(ticket) {
         console.log('message: ' + ticket);
         io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
