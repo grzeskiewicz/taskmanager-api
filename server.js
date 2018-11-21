@@ -107,7 +107,7 @@ app.post('/authuser', [
                 // test a matching password
                 user.comparePassword(data.password, function(err, isMatch) {
                     if (err) throw err;
-                    if (isMatch) res.json({ success: true, msg: 'Credentials are ok', token: 'JWT ' + jwt.sign({ username: user.username, id: user._id }, 'RESTFULAPIs') });
+                    if (isMatch) res.json({ success: true, msg: 'Credentials are ok', token: 'JWT ' + jwt.sign({ username: user.username, id: user._id, role:user.role }, 'RESTFULAPIs') });
                 });
             });
 
@@ -131,7 +131,7 @@ app.get('/memberinfo', (req, res) => {
             User.findOne({ username: decode.username }, function(err, user) {
                 if (err) throw err;
                 if (user) {
-                    res.json({ success: true, msg: decode.email });
+                    res.json({ success: true, msg: decode.username, role: decode.role });
                 } else {
                     res.json({ success: false, msg: "No such user registered" });
                 }
