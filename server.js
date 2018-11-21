@@ -148,7 +148,6 @@ app.get('/memberinfo', (req, res) => {
 
 
 io.on('connection', function(socket) {
-    console.log(socket);
     socket.broadcast.emit('test',{msg: 'pykło tak sobie'});
     io.emit('test',{msg:'pykykyk'});
     console.log('a user connected');
