@@ -10,12 +10,12 @@ var io = require('socket.io')(http);
 const { body, validationResult } = require('express-validator/check');
 var bodyParser = require('body-parser');
 const path = require('path');
-var corsOptions = {  //for reacts js 
+/*var corsOptions = {  //for reacts js 
   origin: 'http://localhost:3000',
   credentials:true,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-app.use(cors(corsOptions));
+}*/
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies 
 const User = mongoose.model('User');
