@@ -119,6 +119,7 @@ app.post('/authuser', [
 
 
 app.get('/memberinfo', (req, res) => {
+    console.log(req.headers);
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
         jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
             console.log("DECODE: ");
