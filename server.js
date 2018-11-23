@@ -146,7 +146,7 @@ app.get('/memberinfo', (req, res) => {
     }
 });
 
-
+const userlist=new Set(); 
 
 io.on('connection', function(socket) {
     socket.broadcast.emit('test', { msg: 'pykło tak sobie' });
@@ -162,6 +162,9 @@ io.on('connection', function(socket) {
 
     socket.on('logged', function(user) {
         console.log('username: ' + user);
+        userlist.add(user);
+        console.log(userlist);
+
     });
 
     socket.on('ticketordered', function(ticket) {
