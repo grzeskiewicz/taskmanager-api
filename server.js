@@ -164,7 +164,7 @@ io.on('connection', function(socket) {
         console.log('username: ' + user);
         userlist.add(user);
         console.log(userlist);
-        io.emit('userlist', userlist);
+        io.emit('userlist', {userlist: Array.from(userlist)});
 
     });
 
