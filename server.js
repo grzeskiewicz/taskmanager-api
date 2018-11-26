@@ -160,6 +160,10 @@ io.on('connection', function(socket) {
         console.log('message: ' + msg);
     });
 
+    socket.on('newtask', function(task) {
+        console.log('message: ' + task);
+    });
+
     socket.on('logged', function(user) {
         console.log('username: ' + user);
         userlist.add(user);
