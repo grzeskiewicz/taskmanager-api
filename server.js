@@ -161,7 +161,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('newtask', function(task) {
-        console.log('message: ' + task);
+        console.log('message: ' + JSON.stringify(task));
     });
 
     socket.on('logged', function(user) {
