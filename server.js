@@ -164,10 +164,7 @@ io.on('connection', function(socket) {
         console.log('message: ' + JSON.stringify(task));
 
         var nsp = io.of(`/${task.username}`);
-        /*nsp.on('connection', function(socket) {
-            console.log('someone connected');
-        }); */
-        nsp.emit('hi', 'everyone!');
+        nsp.emit('taskreceived', task);
     });
 
 
