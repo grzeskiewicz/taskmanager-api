@@ -107,7 +107,7 @@ app.post('/authuser', [
                 // test a matching password
                 user.comparePassword(data.password, function(err, isMatch) {
                     if (err) throw err;
-                    if (isMatch) res.json({ success: true, msg: 'Credentials are ok', token: 'JWT ' + jwt.sign({ username: user.username, id: user._id, role:user.role }, 'RESTFULAPIs') });
+                    if (isMatch) res.json({ success: true, msg: 'Credentials are ok', token: 'JWT ' + jwt.sign({ username: user.username, id: user._id, role: user.role }, 'RESTFULAPIs') });
                 });
             });
 
@@ -146,7 +146,7 @@ app.get('/memberinfo', (req, res) => {
     }
 });
 
-const userlist=new Set(); 
+const userlist = new Set();
 
 io.on('connection', function(socket) {
     socket.broadcast.emit('test', { msg: 'pykło tak sobie' });
@@ -162,13 +162,21 @@ io.on('connection', function(socket) {
 
     socket.on('newtask', function(task) {
         console.log('message: ' + JSON.stringify(task));
+
+        var nsp = io.of(`/${task.username}`);
+        /*nsp.on('connection', function(socket) {
+            console.log('someone connected');
+        }); */
+        nsp.emit('hi', 'everyone!');
     });
+
+
 
     socket.on('logged', function(user) {
         console.log('username: ' + user);
         userlist.add(user);
         console.log(userlist);
-        io.emit('userlist', {userlist: Array.from(userlist)});
+        io.emit('userlist', { userlist: Array.from(userlist) });
 
     });
 
