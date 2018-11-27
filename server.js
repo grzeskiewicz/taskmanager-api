@@ -162,7 +162,7 @@ io.on('connection', function(socket) {
 
     socket.on('newtask', function(task) {
         console.log('message: ' + JSON.stringify(task));
-
+task.status='new';
         var nsp = io.of(`/${task.username}`);
         nsp.emit('taskreceived', task);
     });
