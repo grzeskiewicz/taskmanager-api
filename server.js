@@ -161,7 +161,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('newtask', function(task) {
-        //task['status']='new';
+        task['status']='new';
         console.log('message: ' + JSON.stringify(task));
         
         var nsp = io.of(`/${task.username}`);
