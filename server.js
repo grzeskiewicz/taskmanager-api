@@ -101,7 +101,7 @@ app.post('/authuser', [
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const data = req.body;
-            console.log(data);
+           // console.log(data);
             User.findOne({ username: data.username }, function(err, user) {
                 if (err) throw err;
                 // test a matching password
@@ -119,11 +119,11 @@ app.post('/authuser', [
 
 
 app.get('/memberinfo', (req, res) => {
-    console.log(req.headers);
+    //console.log(req.headers);
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
         jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
-            console.log("DECODE: ");
-            console.log(decode);
+           // console.log("DECODE: ");
+            //console.log(decode);
             if (err) req.user = undefined;
             if (decode === undefined) {
                 res.json({ success: false, msg: "No token" });
