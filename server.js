@@ -165,14 +165,13 @@ io.on('connection', function(socket) {
        // console.log('message: ' + JSON.stringify(task));
         //console.log('nsp',task.username);
         var nsp = io.of(`/${task.username}`);
-        console.log(nsp)
+        //console.log(nsp)
         nsp.emit('taskreceived', task);
     });
 
 
 
     socket.on('logged', function(user) {
-        console.log('username: ' + user);
         userlist.add(user);
         console.log(userlist);
         io.emit('userlist', { userlist: Array.from(userlist) });
