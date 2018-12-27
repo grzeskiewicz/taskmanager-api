@@ -101,7 +101,7 @@ app.post('/authuser', [
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const data = req.body;
-           // console.log(data);
+            // console.log(data);
             User.findOne({ username: data.username }, function(err, user) {
                 if (err) throw err;
                 // test a matching password
@@ -122,7 +122,7 @@ app.get('/memberinfo', (req, res) => {
     //console.log(req.headers);
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
         jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
-           // console.log("DECODE: ");
+            // console.log("DECODE: ");
             //console.log(decode);
             if (err) req.user = undefined;
             if (decode === undefined) {
@@ -159,24 +159,27 @@ io.on('connection', function(socket) {
     });
 
     socket.on('newtask', function(task) {
-        task['status']='new';
+        task['status'] = 'new';
 
-        var nsp = io.of(`/${task.username}`);
-        console.log(task);
-        nsp.emit('taskreceived', task);
+        //var nsp = io.of(`/${task.username}`);
+        //console.log(task);
+        //nsp.emit('taskreceived', task);
     });
 
 
 
     socket.on('logged', function(user) {
         var nsp = io.of(`/${user}`);
-        userlist.add({user:nsp});
-        console.log(userlist);
+        nsp.on('connection', function(socket) {
+            console.log('someone connected');
+        });
+        userlist.add(user);
+        //console.log(userlist);
         io.emit('userlist', { userlist: Array.from(userlist) });
 
     });
 
-        socket.on('logout', function(user) {
+    socket.on('logout', function(user) {
         userlist.delete(user);
         console.log(userlist);
         io.emit('userlist', { userlist: Array.from(userlist) });
