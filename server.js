@@ -158,13 +158,13 @@ io.on('connection', function(socket) {
         console.log('message: ' + msg);
     });
 
-    socket.on('newtask', function(task) {
+    /*socket.on('newtask', function(task) {
         task['status'] = 'new';
 
         //var nsp = io.of(`/${task.username}`);
         //console.log(task);
         //nsp.emit('taskreceived', task);
-    });
+    });*/
 
 
 
@@ -172,6 +172,7 @@ io.on('connection', function(socket) {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(userSocket) {
             console.log('someone connected');
+            console.log(userSocket);
             userSocket.on('newtask',function(task){
                 console.log('newtask sockethehe');
                 task['status'] = 'new';
