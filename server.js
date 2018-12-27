@@ -173,7 +173,7 @@ io.on('connection', function(socket) {
         nsp.on('connection', function(userSocket) {
             console.log('someone connected');
             userSocket.on('newtask',function(task){
-                console.log(task);
+                console.log(this);
                 task['status'] = 'new';
                 nsp.emit('taskreceived', task); //tutaj jeszcze test
             });
