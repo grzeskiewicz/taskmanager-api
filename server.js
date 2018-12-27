@@ -172,11 +172,10 @@ io.on('connection', function(socket) {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(userSocket) {
             console.log('someone connected');
-            console.log(userSocket);
             userSocket.on('newtask',function(task){
                 console.log('newtask sockethehe');
                 task['status'] = 'new';
-                userSocket.emit('taskreceived', task);
+                userSocket.emit('taskreceived', task); //tutaj jeszcze test
             });
         });
         userlist.add(user);
