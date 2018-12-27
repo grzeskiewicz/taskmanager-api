@@ -154,10 +154,6 @@ io.on('connection', function(socket) {
         console.log('user disconnected');
     });
 
-    socket.on('test1', function(msg) {
-        console.log('message: ' + msg);
-    });
-
     /*socket.on('newtask', function(task) {
         task['status'] = 'new';
 
@@ -172,13 +168,14 @@ io.on('connection', function(socket) {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(socket) {
             console.log('someone connected');
+            console.log(socket);
             socket.on('newtask',function(task){
                 task['status'] = 'new';
                 nsp.emit('taskreceived', task); //tutaj jeszcze test
             });
         });
         userlist.add(user);
-        console.log(userlist);
+        //console.log(userlist);
         io.emit('userlist', { userlist: Array.from(userlist) });
 
     });
