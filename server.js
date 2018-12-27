@@ -174,7 +174,7 @@ io.on('connection', function(socket) {
             console.log('someone connected');
             socket.on('newtask',function(task){
                 task['status'] = 'new';
-                socket.emit('taskreceived', task); //tutaj jeszcze test
+                nsp.emit('taskreceived', task); //tutaj jeszcze test
             });
         });
         userlist.add(user);
