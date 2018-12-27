@@ -178,6 +178,13 @@ io.on('connection', function(socket) {
 
     });
 
+        socket.on('logout', function(user) {
+        userlist.delete(user);
+        console.log(userlist);
+        io.emit('userlist', { userlist: Array.from(userlist) });
+
+    });
+
     socket.on('ticketordered', function(ticket) {
         console.log('message: ' + ticket);
         io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
