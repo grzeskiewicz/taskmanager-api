@@ -168,10 +168,10 @@ io.on('connection', function(socket) {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(socket) {
             console.log('someone connected');
-            console.log(socket);
             socket.on('newtask',function(task){
                 task['status'] = 'new';
                 nsp.emit('taskreceived', task); //tutaj jeszcze test
+console.log('task sent to nsp');
             });
         });
         userlist.add(user);
