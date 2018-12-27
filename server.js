@@ -149,8 +149,6 @@ app.get('/memberinfo', (req, res) => {
 const userlist = new Set();
 
 io.on('connection', function(socket) {
-    //socket.broadcast.emit('test', { msg: 'pykło tak sobie' });
-  //  io.emit('test', { msg: 'pykykyk' });
     console.log('a user connected');
     socket.on('disconnect', function() {
         console.log('user disconnected');
@@ -171,7 +169,8 @@ io.on('connection', function(socket) {
 
 
     socket.on('logged', function(user) {
-        userlist.add(user);
+        var nsp = io.of(`/${user}`);
+        userlist.add({user:nsp});
         console.log(userlist);
         io.emit('userlist', { userlist: Array.from(userlist) });
 
