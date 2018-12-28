@@ -165,27 +165,31 @@ io.on('connection', function(socket) {
 
 
     socket.on('logged', function(user) {
-        let i=0;
-        let j=0
+        let i = 0;
+        let j = 0
         j++;
         console.log(j);
-        if (user!== 'admin') {
-        var nsp = io.of(`/${user}`);
-        nsp.on('connection', function(userSocket) {
-            console.log(io.sockets.sockets);
-            console.log('someone connected');
-            userSocket.join(`/${user}-room`);
-            userSocket.on('newtask', function(task) {
-                task['status'] = 'new';
-                nsp.to(`/${user}-room`).emit('taskreceived', task); //tutaj jeszcze test
-                i++;
-                console.log('task sent to nsp',user,i);
+        if (user !== 'admin') {
+            var nsp = io.of(`/${user}`);
+            nsp.on('connection', function(userSocket) {
+                let sockets= ...io.sockets.sockets;
+                for (var socketId in sockets) {
+                    var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
+                    console.log(socketL);
+                }
+                console.log('someone connected');
+                userSocket.join(`/${user}-room`);
+                userSocket.on('newtask', function(task) {
+                    task['status'] = 'new';
+                    nsp.to(`/${user}-room`).emit('taskreceived', task); //tutaj jeszcze test
+                    i++;
+                    console.log('task sent to nsp', user, i);
+                });
             });
-        });
-        userlist.add(user);
-        //console.log(userlist);
-        io.emit('userlist', { userlist: Array.from(userlist) });
-    }
+            userlist.add(user);
+            //console.log(userlist);
+            io.emit('userlist', { userlist: Array.from(userlist) });
+        }
 
     });
 
