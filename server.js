@@ -172,7 +172,7 @@ io.on('connection', function(socket) {
         if (user!== 'admin') {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(userSocket) {
-            console.log(io.sockets);
+            console.log(io.sockets.sockets);
             console.log('someone connected');
             userSocket.join(`/${user}-room`);
             userSocket.on('newtask', function(task) {
