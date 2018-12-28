@@ -166,6 +166,7 @@ io.on('connection', function(socket) {
 
     socket.on('logged', function(user) {
         let i=0;
+        if (user!== 'admin') {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(userSocket) {
             console.log('someone connected');
@@ -180,6 +181,7 @@ io.on('connection', function(socket) {
         userlist.add(user);
         //console.log(userlist);
         io.emit('userlist', { userlist: Array.from(userlist) });
+    }
 
     });
 
