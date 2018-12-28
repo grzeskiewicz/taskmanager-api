@@ -166,6 +166,9 @@ io.on('connection', function(socket) {
 
     socket.on('logged', function(user) {
         let i=0;
+        let j=0
+        j++;
+        console.log(j);
         if (user!== 'admin') {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(userSocket) {
