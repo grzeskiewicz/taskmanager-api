@@ -167,14 +167,14 @@ io.on('connection', function(socket) {
     socket.on('logged', function(user) {
         let i=0;
         var nsp = io.of(`/${user}`);
-        nsp.on('connection', function(socket) {
+        nsp.on('connection', function(userSocket) {
             console.log('someone connected');
-            socket.join(`/${user}-room`);
-            socket.on('newtask', function(task) {
+            userSocket.join(`/${user}-room`);
+            userSocket.on('newtask', function(task) {
                 task['status'] = 'new';
                 nsp.to(`/${user}-room`).emit('taskreceived', task); //tutaj jeszcze test
                 i++;
-                console.log('task sent to nsp',i);
+                console.log('task sent to nsp',user,i);
             });
         });
         userlist.add(user);
