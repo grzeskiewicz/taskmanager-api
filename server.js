@@ -168,9 +168,10 @@ io.on('connection', function(socket) {
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(socket) {
             console.log('someone connected');
+            socket.join(`/${user}-room`);
             socket.on('newtask', function(task) {
                 task['status'] = 'new';
-                socket.broadcast('taskreceived', task); //tutaj jeszcze test
+                nsp.to(`/${user}-room`).emit('taskreceived', task); //tutaj jeszcze test
                 console.log('task sent to nsp');
             });
         });
