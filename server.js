@@ -165,6 +165,7 @@ io.on('connection', function(socket) {
 
 
     socket.on('logged', function(user) {
+        let i=0;
         var nsp = io.of(`/${user}`);
         nsp.on('connection', function(socket) {
             console.log('someone connected');
@@ -172,7 +173,8 @@ io.on('connection', function(socket) {
             socket.on('newtask', function(task) {
                 task['status'] = 'new';
                 nsp.to(`/${user}-room`).emit('taskreceived', task); //tutaj jeszcze test
-                console.log('task sent to nsp');
+                i++;
+                console.log('task sent to nsp',i);
             });
         });
         userlist.add(user);
