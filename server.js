@@ -168,7 +168,7 @@ io.on('connection', function(socket) {
         let i = 0;
         let j = 0
         j++;
-        console.log(j);
+        console.log('logged', j);
         if (user !== 'admin') {
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
@@ -176,7 +176,7 @@ io.on('connection', function(socket) {
                 console.log(sockets.length);
                 for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
-                    console.log(socketL.nsp);
+                    console.log('namespaces',socketL.nsp);
                 }
                 console.log('someone connected');
                 userSocket.join(`/${user}-room`);
