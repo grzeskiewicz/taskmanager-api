@@ -173,8 +173,8 @@ io.on('connection', function(socket) {
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
                 let sockets= io.sockets.sockets;
-                //console.log(sockets);
-                for (var socketId in sockets) {
+                console.log(sockets.length);
+                for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
                     console.log(socketL.nsp);
                 }
