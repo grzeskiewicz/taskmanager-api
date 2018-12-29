@@ -173,10 +173,10 @@ io.on('connection', function(socket) {
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
                 let sockets= io.sockets.sockets;
-                console.log(sockets);
+                //console.log(sockets);
                 for (var socketId in sockets) {
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
-                    console.log(socketId);
+                    console.log(socketL);
                 }
                 console.log('someone connected');
                 userSocket.join(`/${user}-room`);
