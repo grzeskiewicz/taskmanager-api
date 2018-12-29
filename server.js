@@ -173,14 +173,16 @@ io.on('connection', function(socket) {
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
                 let sockets= io.sockets.sockets;
+                const namespaces=[];
                 for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
-                   // console.log('namespaces',Object.keys(socketL.nsp.server.nsps));
+                    namespaces.push(Object.keys(socketL.nsp.server.nsps));
                 }
-                     const namespaces = [...sockets].map((socket, index) => {
+                console.log(namespaces);
+                     /*const namespaces = [...sockets].map((socket, index) => {
             return Object.keys(socket.nsp.server.nsps);
         });
-                     console.log('nsps arr', namespaces);
+                     console.log('nsps arr', namespaces);*/
                 console.log('someone connected');
                 userSocket.join(`/${user}-room`);
                 userSocket.on('newtask', function(task) {
