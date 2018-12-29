@@ -162,7 +162,7 @@ io.on('connection', function(socket) {
         //nsp.emit('taskreceived', task);
     });*/
 
-
+const namespaces=[];
 
     socket.on('logged', function(user) {
         let i = 0;
@@ -173,7 +173,7 @@ io.on('connection', function(socket) {
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
                 let sockets= io.sockets.sockets;
-                const namespaces=[];
+                
                 for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
                     namespaces.push(Object.keys(socketL.nsp.server.nsps));
