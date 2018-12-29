@@ -177,7 +177,7 @@ io.on('connection', function(socket) {
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
                    // console.log('namespaces',Object.keys(socketL.nsp.server.nsps));
                 }
-                     const namespaces = sockets.map((socket, index) => {
+                     const namespaces = [...sockets].map((socket, index) => {
             return Object.keys(socket.nsp.server.nsps);
         });
                      console.log('nsps arr', namespaces);
