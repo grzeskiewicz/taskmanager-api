@@ -176,7 +176,7 @@ io.on('connection', function(socket) {
                 //console.log(sockets);
                 for (var socketId in sockets) {
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
-                    console.log(socketL);
+                    console.log(socketL.nsp);
                 }
                 console.log('someone connected');
                 userSocket.join(`/${user}-room`);
