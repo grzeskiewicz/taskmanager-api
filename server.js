@@ -176,7 +176,7 @@ io.on('connection', function(socket) {
                 console.log(sockets.length);
                 for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
                     var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
-                    console.log('namespaces',socketL);
+                    console.log('namespaces',socketL.nsp.Namespace);
                 }
                 console.log('someone connected');
                 userSocket.join(`/${user}-room`);
