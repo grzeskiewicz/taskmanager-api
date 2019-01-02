@@ -190,7 +190,7 @@ io.on('connection', function(socket) {
             nsp.on('connection', function(userSocket) {
                 //console.log(namespaces);
 
-                console.log('someone connected');
+                console.log('someone connected', user);
                 userSocket.join(`/${user}-room`);
                 userSocket.on('newtask', function(task) {
                     task['status'] = 'new';
