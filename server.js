@@ -146,17 +146,18 @@ app.get('/memberinfo', (req, res) => {
     }
 });
 
-function checkSockets(user) {
+function socketExists(user) {
     let sockets = io.sockets.sockets;
-    for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
-        var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
+    for (var socketL of sockets) { //check if the nsp already exists, don't create new one when logging in
+         //loop through and do whatever with each connected socket
         const socketNames = Object.keys(socketL.nsp.server.nsps);
         for (var socketName of socketNames) {
-            console.log(socketName);
+            if (socketName===user) return true;
         }
         //namespaces.push();
 
     }
+    return false;
 }
 
 
@@ -182,11 +183,12 @@ io.on('connection', function(socket) {
     socket.on('logged', function(user) {
 
         console.log('logged');
-        if (user !== 'admin') {
+        if (user !== 'admin' && !socketExists(user)) {
+
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
                 //console.log(namespaces);
-checkSockets(user);
+
                 console.log('someone connected');
                 userSocket.join(`/${user}-room`);
                 userSocket.on('newtask', function(task) {
