@@ -148,8 +148,9 @@ app.get('/memberinfo', (req, res) => {
 
 function socketExists(user) {
     let sockets = io.sockets.sockets;
-    for (var socketL of sockets) { //check if the nsp already exists, don't create new one when logging in
+    for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
          //loop through and do whatever with each connected socket
+         const socketL=sockets[socketId];
         const socketNames = Object.keys(socketL.nsp.server.nsps);
         for (var socketName of socketNames) {
             if (socketName===user) return true;
