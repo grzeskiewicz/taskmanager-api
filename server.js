@@ -184,7 +184,7 @@ io.on('connection', function(socket) {
     socket.on('logged', function(user) {
 
         console.log('logged');
-        if (user !== 'admin' && !socketExists(user)) {
+        if (user !== 'admin') {
 
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
