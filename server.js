@@ -146,6 +146,21 @@ app.get('/memberinfo', (req, res) => {
     }
 });
 
+function checkSockets(user) {
+    let sockets = io.sockets.sockets;
+    for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
+        var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
+        const socketNames = Object.keys(socketL.nsp.server.nsps);
+        for (var socketName of socketNames) {
+            console.log(socketName);
+        }
+        //namespaces.push();
+
+    }
+}
+
+
+
 const userlist = new Set();
 
 io.on('connection', function(socket) {
@@ -162,38 +177,24 @@ io.on('connection', function(socket) {
         //nsp.emit('taskreceived', task);
     });*/
 
-const namespaces=[];
+    const namespaces = [];
 
     socket.on('logged', function(user) {
-        let i = 0;
-        let j = 0
-        j++;
-        console.log('logged', j);
+
+        console.log('logged');
         if (user !== 'admin') {
             var nsp = io.of(`/${user}`);
             nsp.on('connection', function(userSocket) {
-                let sockets= io.sockets.sockets;
-                
-                for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
-                    var socketL = sockets[socketId]; //loop through and do whatever with each connected socket
-                    namespaces.push(Object.keys(socketL.nsp.server.nsps));
-                }
-                console.log(namespaces);
-                     /*const namespaces = [...sockets].map((socket, index) => {
-            return Object.keys(socket.nsp.server.nsps);
-        });
-                     console.log('nsps arr', namespaces);*/
+                //console.log(namespaces);
+checkSockets(user);
                 console.log('someone connected');
                 userSocket.join(`/${user}-room`);
                 userSocket.on('newtask', function(task) {
                     task['status'] = 'new';
                     nsp.to(`/${user}-room`).emit('taskreceived', task); //tutaj jeszcze test
-                    i++;
-                    console.log('task sent to nsp', user, i);
                 });
             });
             userlist.add(user);
-            //console.log(userlist);
             io.emit('userlist', { userlist: Array.from(userlist) });
         }
 
