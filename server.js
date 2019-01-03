@@ -153,7 +153,9 @@ function socketExists(user) {
          const socketL=sockets[socketId];
         const socketNames = Object.keys(socketL.nsp.server.nsps);
         for (var socketName of socketNames) {
+            console.log(socketName);
             if (socketName===user) return true;
+
         }
         //namespaces.push();
 
@@ -199,6 +201,8 @@ io.on('connection', function(socket) {
             });
             userlist.add(user);
             console.log(userlist);
+            io.emit('userlist', { userlist: Array.from(userlist) });
+        } else {
             io.emit('userlist', { userlist: Array.from(userlist) });
         }
 
