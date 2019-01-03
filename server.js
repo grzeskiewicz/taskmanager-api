@@ -191,14 +191,15 @@ io.on('connection', function(socket) {
             var nsp = io.of(`/${user}`);
             socketExists(user);
             nsp.on('connection', function(userSocket) {
-                console.log(nsp);
+                //console.log(nsp);
 
                 console.log('someone connected', user);
-            // userSocket.join(`/${user}-room`);
+                userSocket.join(`/${user}-room`);
                 userSocket.on('newtask', function(task) {
                     console.log('newtask');
                     task['status'] = 'new';
-                    nsp.emit('taskreceived', task); //tutaj jeszcze test
+                    io.to(`/${user}-room`).emit('taskreceived',task);
+                    //nsp.emit('taskreceived', task); //tutaj jeszcze test
                 });
             });
             userlist.add(user);
