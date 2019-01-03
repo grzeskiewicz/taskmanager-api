@@ -188,20 +188,15 @@ io.on('connection', function(socket) {
         console.log('logged');
         if (user !== 'admin') {
 
-            var nsp = io.of(`/${user}`);
-            socketExists(user);
-            nsp.on('connection', function(userSocket) {
+            //var nsp = io.of(`/${user}`);
+            //socketExists(user);
+           // nsp.on('connection', function(userSocket) {
                 //console.log(nsp);
 
                 console.log('someone connected', user);
-                userSocket.join(`/${user}-room`);
-                nsp.on('newtask', function(task) {
-                    console.log('newtask');
-                    task['status'] = 'new';
-                    io.to(`/${user}-room`).emit('taskreceived',task);
-                    //nsp.emit('taskreceived', task); //tutaj jeszcze test
-                });
-            });
+                socket.join(`/${user}-room`);
+   
+            //});
             userlist.add(user);
             console.log(userlist);
             io.emit('userlist', { userlist: Array.from(userlist) });
@@ -210,6 +205,14 @@ io.on('connection', function(socket) {
         }
 
     });
+
+
+    socket.on('newtask', function(task) {
+                    console.log('newtask');
+                    task['status'] = 'new';
+                    io.to(`/${user}-room`).emit('taskreceived',task);
+                    //nsp.emit('taskreceived', task); //tutaj jeszcze test
+                });
 
     socket.on('logout', function(user) {
         userlist.delete(user);
