@@ -196,6 +196,7 @@ io.on('connection', function(socket) {
                 console.log('someone connected', user);
             // userSocket.join(`/${user}-room`);
                 nsp.on('newtask', function(task) {
+                    console.log('newtask');
                     task['status'] = 'new';
                     nsp.emit('taskreceived', task); //tutaj jeszcze test
                 });
