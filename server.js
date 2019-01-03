@@ -210,7 +210,7 @@ io.on('connection', function(socket) {
     socket.on('newtask', function(task) {
                     console.log('newtask');
                     task['status'] = 'new';
-                    io.to(`/${user}-room`).emit('taskreceived',task);
+                    io.to(`/${task.username}-room`).emit('taskreceived',task);
                     //nsp.emit('taskreceived', task); //tutaj jeszcze test
                 });
 
