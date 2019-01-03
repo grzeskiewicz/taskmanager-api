@@ -191,7 +191,7 @@ io.on('connection', function(socket) {
             var nsp = io.of(`/${user}`);
             socketExists(user);
             nsp.on('connection', function(userSocket) {
-                //console.log(namespaces);
+                console.log(nsp));
 
                 console.log('someone connected', user);
             // userSocket.join(`/${user}-room`);
