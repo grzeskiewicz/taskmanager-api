@@ -189,6 +189,7 @@ io.on('connection', function(socket) {
         if (user !== 'admin') {
 
             var nsp = io.of(`/${user}`);
+            socketExists(user);
             nsp.on('connection', function(userSocket) {
                 //console.log(namespaces);
 
