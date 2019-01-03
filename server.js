@@ -198,6 +198,7 @@ io.on('connection', function(socket) {
                 });
             });
             userlist.add(user);
+            console.log(userlist);
             io.emit('userlist', { userlist: Array.from(userlist) });
         }
 
