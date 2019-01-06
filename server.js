@@ -149,12 +149,12 @@ app.get('/memberinfo', (req, res) => {
 function socketExists(user) {
     let sockets = io.sockets.sockets;
     for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
-         //loop through and do whatever with each connected socket
-         const socketL=sockets[socketId];
+        //loop through and do whatever with each connected socket
+        const socketL = sockets[socketId];
         const socketNames = Object.keys(socketL.nsp.server.nsps);
         for (var socketName of socketNames) {
             console.log(socketName);
-            if (socketName===user) return true;
+            if (socketName === user) return true;
 
         }
         //namespaces.push();
@@ -166,6 +166,7 @@ function socketExists(user) {
 
 
 const userlist = new Set();
+const tasklist= {};
 
 io.on('connection', function(socket) {
     console.log('a user connected');
@@ -173,34 +174,18 @@ io.on('connection', function(socket) {
         console.log('user disconnected');
     });
 
-    /*socket.on('newtask', function(task) {
-        task['status'] = 'new';
-
-        //var nsp = io.of(`/${task.username}`);
-        //console.log(task);
-        //nsp.emit('taskreceived', task);
-    });*/
-
-    const namespaces = [];
 
     socket.on('logged', function(user) {
 
         console.log('logged');
         if (user !== 'admin') {
-
-            //var nsp = io.of(`/${user}`);
-            //socketExists(user);
-           // nsp.on('connection', function(userSocket) {
-                //console.log(nsp);
-
-                console.log('someone connected', user);
-                socket.join(`/${user}-room`);
-   
-            //});
+            console.log('someone connected', user);
+            socket.join(`/${user}-room`);
             userlist.add(user);
             console.log(userlist);
             io.emit('userlist', { userlist: Array.from(userlist) });
         } else {
+            socket.join(`/${user}-room`);
             io.emit('userlist', { userlist: Array.from(userlist) });
         }
 
@@ -208,11 +193,21 @@ io.on('connection', function(socket) {
 
 
     socket.on('newtask', function(task) {
-                    console.log('newtask');
-                    task['status'] = 'new';
-                    io.to(`/${task.username}-room`).emit('taskreceived',task);
-                    //nsp.emit('taskreceived', task); //tutaj jeszcze test
-                });
+        console.log('newtask');
+        task['status'] = 'new';
+        
+        tasklist[task.username].push(task);
+        io.to(`/${task.username}-room`).emit('taskreceived', task);
+        io.to(`/admin-room`).emit('userstasks', tasklist);
+        //nsp.emit('taskreceived', task); //tutaj jeszcze test
+    });
+
+    socket.on('accept', function(task) {
+
+
+        io.to(`/${task.username}-room`).emit('taskreceived', task);
+        //nsp.emit('taskreceived', task); //tutaj jeszcze test
+    });
 
     socket.on('logout', function(user) {
         userlist.delete(user);
