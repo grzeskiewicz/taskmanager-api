@@ -199,6 +199,7 @@ io.on('connection', function(socket) {
         tasklist[task.username].push(task);
         io.to(`/${task.username}-room`).emit('taskreceived', task);
         io.to(`/admin-room`).emit('userstasks', tasklist);
+        console.log(tasklist);
         //nsp.emit('taskreceived', task); //tutaj jeszcze test
     });
 
