@@ -179,6 +179,7 @@ io.on('connection', function(socket) {
 
         console.log('logged');
         if (user !== 'admin') {
+            if (!tasklist[user]) tasklist[user]=[];
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
