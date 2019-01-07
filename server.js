@@ -183,8 +183,8 @@ io.on('connection', function(socket) {
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
-            console.log(userlist);
             io.emit('userlist', { userlist: Array.from(userlist) });
+            io.to(`/${user}-room`).emit('usertasks', tasklist[user]);
         } else {
             console.log('ADMIN JOINED');
             socket.join(`/${user}-room`);
