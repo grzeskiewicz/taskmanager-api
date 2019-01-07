@@ -212,7 +212,7 @@ io.on('connection', function(socket) {
     socket.on('accept', function(task) {
 
 
-        io.to(`/${task.username}-room`).emit('taskreceived', task);
+       // io.to(`/${task.username}-room`).emit('taskreceived', task);
         //nsp.emit('taskreceived', task); //tutaj jeszcze test
     });
 
