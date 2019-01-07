@@ -186,6 +186,7 @@ io.on('connection', function(socket) {
             console.log(userlist);
             io.emit('userlist', { userlist: Array.from(userlist) });
         } else {
+            console.log('ADMIN JOINED');
             socket.join(`/${user}-room`);
             io.emit('userlist', { userlist: Array.from(userlist) });
         }
@@ -199,7 +200,7 @@ io.on('connection', function(socket) {
         
         tasklist[task.username].push(task);
         io.to(`/${task.username}-room`).emit('taskreceived', task);
-        io.to(`/admin-room`).emit('userstasks', tasklist);
+        io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
         console.log(tasklist);
         //nsp.emit('taskreceived', task); //tutaj jeszcze test
     });
