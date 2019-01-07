@@ -166,7 +166,7 @@ function socketExists(user) {
 
 
 const userlist = new Set();
-const tasklist= {};
+const tasklist = {};
 
 io.on('connection', function(socket) {
     console.log('a user connected');
@@ -179,7 +179,7 @@ io.on('connection', function(socket) {
 
         console.log('logged');
         if (user !== 'admin') {
-            if (!tasklist[user]) tasklist[user]=[];
+            if (!tasklist[user]) tasklist[user] = [];
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
@@ -197,12 +197,16 @@ io.on('connection', function(socket) {
     socket.on('newtask', function(task) {
         console.log('newtask');
         task['status'] = 'new';
-        
+
         tasklist[task.username].push(task);
         io.to(`/${task.username}-room`).emit('taskreceived', task);
         io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
         console.log(tasklist);
-        //nsp.emit('taskreceived', task); //tutaj jeszcze test
+    });
+
+
+    socket.on('gettasks', function(user) {
+        io.to(`/admin-room`).emit('usertasks', tasklist[user]);
     });
 
     socket.on('accept', function(task) {
