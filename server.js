@@ -212,11 +212,17 @@ io.on('connection', function(socket) {
 
     socket.on('accept', function(task) {
         task['status']='pending';
-        setInterval(() => {
+        const timer=setInterval(() => {
             task['timeleft']-=30;
             io.to(`/${task.username}-room`).emit('countdown', task);
             io.to(`/admin-room`).emit('countdown', task);
         }, 30000);
+
+
+        if (task['timeleft']===0) {
+            io.to(`/admin-room`).emit('timesup', task);
+            clearInterval(timer);
+        }
         //start countdown
         // io.to(`/${task.username}-room`).emit('taskreceived', task);
         //nsp.emit('taskreceived', task); //tutaj jeszcze test
