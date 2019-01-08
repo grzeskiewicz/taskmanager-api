@@ -211,28 +211,29 @@ io.on('connection', function(socket) {
     });
 
     socket.on('accept', function(task) {
-        task['status']='pending';
-        const timer=setInterval(() => {
-            task['timeleft']-=30;
+        task['status'] = 'pending';
+        const timer = setInterval(() => {
+            if (task['timeleft'] === 0) {
+                io.to(`/admin-room`).emit('timesup', task);
+                clearInterval(timer);
+            }
+            task['timeleft'] -= 30;
             io.to(`/${task.username}-room`).emit('countdown', task);
             io.to(`/admin-room`).emit('countdown', task);
         }, 30000);
 
 
-        if (task['timeleft']===0) {
-            io.to(`/admin-room`).emit('timesup', task);
-            clearInterval(timer);
-        }
+
         //start countdown
         // io.to(`/${task.username}-room`).emit('taskreceived', task);
         //nsp.emit('taskreceived', task); //tutaj jeszcze test
     });
 
 
-        socket.on('finish', function(task) {
-        task['timeleft']=0;
-        task['status']='done';
-         io.to(`/admin-room`).emit('userfinished', task);
+    socket.on('finish', function(task) {
+        task['timeleft'] = 0;
+        task['status'] = 'done';
+        io.to(`/admin-room`).emit('userfinished', task);
     });
 
     socket.on('logout', function(user) {
