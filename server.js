@@ -197,7 +197,7 @@ io.on('connection', function(socket) {
     socket.on('newtask', function(task) {
         console.log('newtask');
         task['status'] = 'new';
-        task['timeleft'] = 600;
+        task['timeleft'] = 240;
 
         tasklist[task.username].push(task);
         io.to(`/${task.username}-room`).emit('taskreceived', task);
