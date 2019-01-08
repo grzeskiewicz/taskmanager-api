@@ -197,6 +197,7 @@ io.on('connection', function(socket) {
     socket.on('newtask', function(task) {
         console.log('newtask');
         task['status'] = 'new';
+        task['timeleft'] = 600;
 
         tasklist[task.username].push(task);
         io.to(`/${task.username}-room`).emit('taskreceived', task);
@@ -210,9 +211,12 @@ io.on('connection', function(socket) {
     });
 
     socket.on('accept', function(task) {
-
-
-       // io.to(`/${task.username}-room`).emit('taskreceived', task);
+        console.log(task);
+        setInterval(() => {
+            io.to(`/${task.username}-room`).emit('countdown', task);
+        }, 30000);
+        //start countdown
+        // io.to(`/${task.username}-room`).emit('taskreceived', task);
         //nsp.emit('taskreceived', task); //tutaj jeszcze test
     });
 
