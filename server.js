@@ -211,14 +211,22 @@ io.on('connection', function(socket) {
     });
 
     socket.on('accept', function(task) {
-        console.log(task);
+        task['status']='pending';
         setInterval(() => {
             task['timeleft']-=30;
             io.to(`/${task.username}-room`).emit('countdown', task);
+            io.to(`/admin-room`).emit('countdown', task);
         }, 30000);
         //start countdown
         // io.to(`/${task.username}-room`).emit('taskreceived', task);
         //nsp.emit('taskreceived', task); //tutaj jeszcze test
+    });
+
+
+        socket.on('finish', function(task) {
+        task['timeleft']=0;
+        task['status']='done';
+         io.to(`/admin-room`).emit('userfinished', task);
     });
 
     socket.on('logout', function(user) {
