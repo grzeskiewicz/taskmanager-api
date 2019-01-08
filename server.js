@@ -213,6 +213,7 @@ io.on('connection', function(socket) {
     socket.on('accept', function(task) {
         console.log(task);
         setInterval(() => {
+            task['timeleft']-=30;
             io.to(`/${task.username}-room`).emit('countdown', task);
         }, 30000);
         //start countdown
