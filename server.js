@@ -217,17 +217,13 @@ io.on('connection', function(socket) {
                 io.to(`/admin-room`).emit('timesup', task);
                 clearInterval(timer);
             } else {
+                task['timeleft'] -= 30;
                 io.to(`/${task.username}-room`).emit('countdown', task);
                 io.to(`/admin-room`).emit('countdown', task);
-                task['timeleft'] -= 30;
+                
             }
         }, 30000);
 
-
-
-        //start countdown
-        // io.to(`/${task.username}-room`).emit('taskreceived', task);
-        //nsp.emit('taskreceived', task); //tutaj jeszcze test
     });
 
 
@@ -244,10 +240,10 @@ io.on('connection', function(socket) {
 
     });
 
-    socket.on('ticketordered', function(ticket) {
+   /* socket.on('ticketordered', function(ticket) {
         console.log('message: ' + ticket);
         io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
-    });
+    });*/
 });
 
 
