@@ -163,7 +163,14 @@ function socketExists(user) {
     return false;
 }
 
-
+function switchTask(username, updatedTask) {
+    const userTasks = tasklist[username];
+    for (taskElem in userTasks) {
+        if (userTasks[taskElem].room === updatedTask.room && userTasks[taskElem].content === updatedTask.content) {
+            userTasks[taskElem]=updatedTask;
+        }
+    }
+}
 
 const userlist = new Set();
 const tasklist = {};
@@ -204,7 +211,7 @@ io.on('connection', function(socket) {
         io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
         console.log(tasklist);
     });
-
+    //TODO: Tasklist replace task with statuses and timeleft
 
     socket.on('gettasks', function(user) {
         io.to(`/admin-room`).emit('usertasks', tasklist[user]);
@@ -216,13 +223,15 @@ io.on('connection', function(socket) {
             if (task['timeleft'] === 0) {
                 task['status'] = 'timesup';
                 task['timeleft'] = 0;
+                switchTask(task.username, task);
                 io.to(`/admin-room`).emit('timesup', task);
                 clearInterval(timer);
             } else {
                 task['timeleft'] -= 30;
+                switchTask(task.username, task);
                 io.to(`/${task.username}-room`).emit('countdown', task);
                 io.to(`/admin-room`).emit('countdown', task);
-                
+
             }
         }, 30000);
 
@@ -232,6 +241,7 @@ io.on('connection', function(socket) {
     socket.on('finish', function(task) {
         task['timeleft'] = 0;
         task['status'] = 'done';
+        switchTask(task.username, task);
         io.to(`/admin-room`).emit('userfinished', task);
     });
 
@@ -242,10 +252,10 @@ io.on('connection', function(socket) {
 
     });
 
-   /* socket.on('ticketordered', function(ticket) {
-        console.log('message: ' + ticket);
-        io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
-    });*/
+    /* socket.on('ticketordered', function(ticket) {
+         console.log('message: ' + ticket);
+         io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
+     });*/
 });
 
 
