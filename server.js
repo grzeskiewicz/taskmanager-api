@@ -214,6 +214,8 @@ io.on('connection', function(socket) {
         task['status'] = 'pending';
         const timer = setInterval(() => {
             if (task['timeleft'] === 0) {
+                task['status'] = 'timesup';
+                task['timeleft'] = 0;
                 io.to(`/admin-room`).emit('timesup', task);
                 clearInterval(timer);
             } else {
