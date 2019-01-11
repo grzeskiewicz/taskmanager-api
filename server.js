@@ -221,6 +221,8 @@ io.on('connection', function(socket) {
         task['status'] = 'pending';
         task['timeleft'] -= 30;
         switchTask(task.username, task);
+        io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
+        io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
         const timer = setInterval(() => {
             if (task['timeleft'] === 0) {
                 task['status'] = 'timesup';
