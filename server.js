@@ -167,7 +167,7 @@ function switchTask(username, updatedTask) {
     const userTasks = tasklist[username];
     for (taskElem in userTasks) {
         if (userTasks[taskElem].room === updatedTask.room && userTasks[taskElem].content === updatedTask.content) {
-            userTasks[taskElem]=updatedTask;
+            userTasks[taskElem] = updatedTask;
         }
     }
 }
@@ -219,6 +219,8 @@ io.on('connection', function(socket) {
 
     socket.on('accept', function(task) {
         task['status'] = 'pending';
+        task['timeleft'] -= 30;
+        switchTask(task.username, task);
         const timer = setInterval(() => {
             if (task['timeleft'] === 0) {
                 task['status'] = 'timesup';
@@ -227,8 +229,6 @@ io.on('connection', function(socket) {
                 io.to(`/admin-room`).emit('timesup', tasklist[task.username]);
                 clearInterval(timer);
             } else {
-                task['timeleft'] -= 30;
-                switchTask(task.username, task);
                 io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
                 io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
 
@@ -242,7 +242,7 @@ io.on('connection', function(socket) {
         task['timeleft'] = 0;
         task['status'] = 'done';
         switchTask(task.username, task);
-        io.to(`/admin-room`).emit('userfinished', task);
+        io.to(`/admin-room`).emit('userfinished', tasklist[task.username]);
     });
 
     socket.on('logout', function(user) {
