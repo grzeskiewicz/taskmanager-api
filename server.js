@@ -246,6 +246,7 @@ io.on('connection', function(socket) {
         task['status'] = 'done';
         switchTask(task.username, task);
         io.to(`/admin-room`).emit('userfinished', tasklist[task.username]);
+        io.to(`/${task.username}-room`).emit('userfinished', tasklist[task.username]);
     });
 
     socket.on('logout', function(user) {
