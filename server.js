@@ -231,12 +231,12 @@ io.on('connection', function(socket) {
                 io.to(`/${task.username}-room`).emit('timesup', tasklist[task.username]);
                 clearInterval(timer);
             } else {
-                task['timeleft'] -= 30;
+                task['timeleft'] -= 10;
                 io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
                 io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
 
             }
-        }, 30000);
+        }, 10000);
 
     });
 
