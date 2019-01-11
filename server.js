@@ -228,6 +228,7 @@ io.on('connection', function(socket) {
                 task['timeleft'] = 0;
                 switchTask(task.username, task);
                 io.to(`/admin-room`).emit('timesup', tasklist[task.username]);
+                io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
                 clearInterval(timer);
             } else {
                 task['timeleft'] -= 30;
