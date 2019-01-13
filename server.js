@@ -231,6 +231,7 @@ io.on('connection', function(socket) {
                 io.to(`/${task.username}-room`).emit('timesup', tasklist[task.username]);
                 clearInterval(timer);
             } else if (task['status']==='cancelled') {
+                io.to(`/${task.username}-room`).emit('cancelled', tasklist[task.username]);
                 clearInterval(timer);
             } else {
                 task['timeleft'] -= 10;
