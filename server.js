@@ -249,6 +249,16 @@ io.on('connection', function(socket) {
         io.to(`/${task.username}-room`).emit('userfinished', tasklist[task.username]);
     });
 
+
+
+    socket.on('cancel', function(task) {
+        task['timeleft'] = 0;
+        task['status'] = 'cancelled';
+        switchTask(task.username, task);
+        io.to(`/admin-room`).emit('cancelled', tasklist[task.username]);
+        io.to(`/${task.username}-room`).emit('cancelled', tasklist[task.username]);
+    });
+
     socket.on('logout', function(user) {
         userlist.delete(user);
         console.log(userlist);
