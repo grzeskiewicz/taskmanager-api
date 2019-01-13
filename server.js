@@ -225,7 +225,7 @@ io.on('connection', function(socket) {
         const timer = setInterval(() => {
             if (task['timeleft'] === 0 && task['status']!=='cancelled') {
                 task['status'] = 'timesup';
-                task['timeleft'] = 0;
+                //task['timeleft'] = 0;
                 switchTask(task.username, task);
                 io.to(`/admin-room`).emit('timesup', tasklist[task.username]);
                 io.to(`/${task.username}-room`).emit('timesup', tasklist[task.username]);
