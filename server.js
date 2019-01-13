@@ -190,12 +190,16 @@ function createTaskDb(task) {
 }
 
 
-function updateTaskDB(task){
+function updateTaskDb(task){
 
 }
 
-function importTaskDB(task){
-
+function importTasksDb(username){
+Task.find({username: username})
+        .then((tasks) => {
+            console.log(tasks);
+        })
+        .catch(() => { console.log({ 'msg': 'Sorry! Something went wrong.' }); });
 }
 
 const userlist = new Set();
@@ -237,6 +241,7 @@ io.on('connection', function(socket) {
         io.to(`/${task.username}-room`).emit('taskreceived', task);
         io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
         createTaskDb(task);
+        importTasksDb(task.username);
     });
     //TODO: Tasklist replace task with statuses and timeleft
 
