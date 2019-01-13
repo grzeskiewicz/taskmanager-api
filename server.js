@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('./database/User');
+require('./database/Task');
 var jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 var express = require('express'),
