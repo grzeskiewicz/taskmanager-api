@@ -177,8 +177,8 @@ function switchTask(username, updatedTask) {
 
 function createTaskDb(task) {
     const date = new Date();
-    const task = new Task({ 'username': task.username, 'room': task.room, 'content': task.content, 'status': task.status, 'timeleft': task.timeleft, 'date': date });
-    task.save()
+    const taskDb = new Task({ 'username': task.username, 'room': task.room, 'content': task.content, 'status': task.status, 'timeleft': task.timeleft, 'date': date });
+    taskDb.save()
         .then(() => {
             console.log('Saved task');
             //res.json({ 'success': true, 'msg': 'Saved' })
