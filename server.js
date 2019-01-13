@@ -230,16 +230,19 @@ io.on('connection', function(socket) {
                 io.to(`/admin-room`).emit('timesup', tasklist[task.username]);
                 io.to(`/${task.username}-room`).emit('timesup', tasklist[task.username]);
                 clearInterval(timer);
-            } else if (task['status']==='cancelled') {
-                io.to(`/${task.username}-room`).emit('cancelled', tasklist[task.username]);
-                console.log('lol');
-                clearInterval(timer);
             } else {
                 task['timeleft'] -= 10;
                 io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
                 io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
 
             }
+
+
+            if (task['status']==='cancelled') {
+                io.to(`/${task.username}-room`).emit('cancelled', tasklist[task.username]);
+                console.log('lol');
+                clearInterval(timer);
+            } 
         }, 10000);
 
     });
