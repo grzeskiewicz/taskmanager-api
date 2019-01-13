@@ -174,6 +174,7 @@ function switchTask(username, updatedTask) {
 
 const userlist = new Set();
 const tasklist = {};
+let timer;
 
 io.on('connection', function(socket) {
     console.log('a user connected');
@@ -222,7 +223,7 @@ io.on('connection', function(socket) {
         switchTask(task.username, task);
         io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
         io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
-        const timer = setInterval(() => {
+       timer = setInterval(() => {
             console.log('timer',task['status']);
             if (task['timeleft'] === 0 && task['status']!=='cancelled') {
                 task['status'] = 'timesup';
@@ -258,6 +259,7 @@ io.on('connection', function(socket) {
         switchTask(task.username, task);
         io.to(`/admin-room`).emit('cancelled', tasklist[task.username]);
         io.to(`/${task.username}-room`).emit('cancelled', tasklist[task.username]);
+        clearInterval(timer);
     });
 
     socket.on('logout', function(user) {
