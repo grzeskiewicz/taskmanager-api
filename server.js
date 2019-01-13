@@ -19,6 +19,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies 
 const User = mongoose.model('User');
+const Task = mongoose.model('Task');
 const auth = require('http-auth');
 
 const basic = auth.basic({
@@ -172,6 +173,30 @@ function switchTask(username, updatedTask) {
     }
 }
 
+
+function createTaskDb(task) {
+    const date = new Date();
+    const task = new Task({ 'username': task.username, 'room': task.room, 'content': task.content, 'status': task.status, 'timeleft': task.timeleft, 'date': date });
+    task.save()
+        .then(() => {
+            console.log('Saved task');
+            //res.json({ 'success': true, 'msg': 'Saved' })
+        })
+        .catch((err) => {
+            console.log(err);
+            //res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' });
+        });
+}
+
+
+function updateTaskDB(task){
+
+}
+
+function importTaskDB(task){
+
+}
+
 const userlist = new Set();
 const tasklist = {};
 let timer;
@@ -210,7 +235,7 @@ io.on('connection', function(socket) {
         tasklist[task.username].push(task);
         io.to(`/${task.username}-room`).emit('taskreceived', task);
         io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
-        console.log(tasklist);
+        createTaskDb(task);
     });
     //TODO: Tasklist replace task with statuses and timeleft
 
@@ -223,9 +248,9 @@ io.on('connection', function(socket) {
         switchTask(task.username, task);
         io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
         io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
-       timer = setInterval(() => {
-            console.log('timer',task['status']);
-            if (task['timeleft'] === 0 && task['status']!=='cancelled') {
+        timer = setInterval(() => {
+            console.log('timer', task['status']);
+            if (task['timeleft'] === 0 && task['status'] !== 'cancelled') {
                 task['status'] = 'timesup';
                 //task['timeleft'] = 0;
                 switchTask(task.username, task);
