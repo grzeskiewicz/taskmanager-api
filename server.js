@@ -223,12 +223,14 @@ io.on('connection', function(socket) {
         io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
         io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
         const timer = setInterval(() => {
-            if (task['timeleft'] === 0) {
+            if (task['timeleft'] === 0 && task['status']!=='cancelled') {
                 task['status'] = 'timesup';
                 task['timeleft'] = 0;
                 switchTask(task.username, task);
                 io.to(`/admin-room`).emit('timesup', tasklist[task.username]);
                 io.to(`/${task.username}-room`).emit('timesup', tasklist[task.username]);
+                clearInterval(timer);
+            } else if (task['status']==='cancelled') {
                 clearInterval(timer);
             } else {
                 task['timeleft'] -= 10;
