@@ -254,7 +254,7 @@ io.on('connection', function(socket) {
 
 
     socket.on('cancel', function(task) {
-        task['timeleft'] = 0;
+        //task['timeleft'] = 0;
         task['status'] = 'cancelled';
         switchTask(task.username, task);
         io.to(`/admin-room`).emit('cancelled', tasklist[task.username]);
