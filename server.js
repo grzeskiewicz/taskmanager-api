@@ -223,6 +223,7 @@ io.on('connection', function(socket) {
         io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
         io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
         const timer = setInterval(() => {
+            console.log('timer',task['status']);
             if (task['timeleft'] === 0 && task['status']!=='cancelled') {
                 task['status'] = 'timesup';
                 //task['timeleft'] = 0;
@@ -236,13 +237,6 @@ io.on('connection', function(socket) {
                 io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
 
             }
-
-
-            if (task['status']==='cancelled') {
-                io.to(`/${task.username}-room`).emit('cancelled', tasklist[task.username]);
-                console.log('lol');
-                clearInterval(timer);
-            } 
         }, 10000);
 
     });
@@ -259,7 +253,6 @@ io.on('connection', function(socket) {
 
 
     socket.on('cancel', function(task) {
-        //task['timeleft'] = 0;
         console.log('cancel', task);
         task['status'] = 'cancelled';
         switchTask(task.username, task);
