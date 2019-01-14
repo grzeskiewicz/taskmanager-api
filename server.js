@@ -295,7 +295,7 @@ io.on('connection', function(socket) {
                     });
                 });
                 
-            } else if task['status']!==='timeup' {
+            } else if (task['status']!=='timeup') {
                 task['timeleft'] -= 10;
                 updateTaskDb(task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
