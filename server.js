@@ -212,7 +212,7 @@ function updateTaskDb(task) {
 
 function importTasksDb(username) {
     Task.find({ username: username })
-        .then((tasks) => task)
+        .then((tasks) => {return tasks})
         .catch(() => { console.log({ 'msg': 'Sorry! Something went wrong.' }); });
 }
 
