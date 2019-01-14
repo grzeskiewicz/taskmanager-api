@@ -211,9 +211,12 @@ function updateTaskDb(task) {
 }
 
 function importTasksDb(username) {
-    Task.find({ username: username })
-        .then((tasks) => {return tasks})
+    const result=Task.find({ username: username })
+        .then((tasks) => {
+            return tasks
+        })
         .catch(() => { console.log({ 'msg': 'Sorry! Something went wrong.' }); });
+        console.log(result);
 }
 
 const userlist = new Set();
