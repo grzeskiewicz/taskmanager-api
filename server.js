@@ -257,7 +257,7 @@ io.on('connection', function(socket) {
         io.to(`/${task.username}-room`).emit('taskreceived', task);
         io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
         createTaskDb(task);
-        console.log(importTasksDb(task.username));
+        importTasksDb(task.username).then((tasks)=>{console.log(tasks)});
     });
     //TODO: Tasklist replace task with statuses and timeleft
 
