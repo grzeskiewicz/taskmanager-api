@@ -218,7 +218,7 @@ function importTasksDb(username) {
             taskList=tasks;
         })
         .catch(() => { console.log({ 'msg': 'Sorry! Something went wrong.' }); });
-
+console.log(taskList);
         return taskList;
 }
 
