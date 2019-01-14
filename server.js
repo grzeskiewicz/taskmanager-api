@@ -257,11 +257,11 @@ io.on('connection', function(socket) {
         task['timeleft'] = 240;
 
         // tasklist[task.username].push(task);
-        io.to(`/${task.username}-room`).emit('taskreceived', task);
-
+        
         createTaskDb(task);
         importTasksDb(task.username).then((tasks) => {
             io.to(`/admin-room`).emit('usertasks', tasks);
+            io.to(`/${task.username}-room`).emit('taskreceived', task);
         });
     });
 
