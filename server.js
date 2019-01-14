@@ -238,7 +238,10 @@ io.on('connection', function(socket) {
             socket.join(`/${user}-room`);
             userlist.add(user);
             io.emit('userlist', { userlist: Array.from(userlist) });
-            io.to(`/${user}-room`).emit('usertasks', tasklist[user]);
+            importTasksDb(user).then((tasks) => {
+                io.to(`/${user}-room`).emit('usertasks', tasks);
+            });
+
         } else {
             console.log('ADMIN JOINED');
             socket.join(`/${user}-room`);
@@ -253,40 +256,51 @@ io.on('connection', function(socket) {
         task['status'] = 'new';
         task['timeleft'] = 240;
 
-        tasklist[task.username].push(task);
+        // tasklist[task.username].push(task);
         io.to(`/${task.username}-room`).emit('taskreceived', task);
-        io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
+
         createTaskDb(task);
-        importTasksDb(task.username).then((tasks)=>{console.log(tasks)});
+        importTasksDb(task.username).then((tasks) => {
+            io.to(`/admin-room`).emit('usertasks', tasks);
+        });
     });
-    //TODO: Tasklist replace task with statuses and timeleft
 
     socket.on('gettasks', function(user) {
-        io.to(`/admin-room`).emit('usertasks', tasklist[user]);
+        importTasksDb(user).then((tasks) => {
+            io.to(`/admin-room`).emit('usertasks', tasks);
+        });
     });
 
     socket.on('accept', function(task) {
         task['status'] = 'pending';
-        switchTask(task.username, task);
+        //switchTask(task.username, task);
         updateTaskDb(task);
-        importTasksDb(task.username);
-        io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
-        io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
+
+        importTasksDb(user).then((tasks) => {
+            io.to(`/${task.username}-room`).emit('countdown', tasks);
+            io.to(`/admin-room`).emit('countdown', tasks);
+        });
+
         timer = setInterval(() => {
             console.log('timer', task['status']);
             if (task['timeleft'] === 0 && task['status'] !== 'cancelled') {
                 task['status'] = 'timesup';
                 //task['timeleft'] = 0;
-                switchTask(task.username, task);
+                //switchTask(task.username, task);
                 updateTaskDb(task);
-                io.to(`/admin-room`).emit('timesup', tasklist[task.username]);
-                io.to(`/${task.username}-room`).emit('timesup', tasklist[task.username]);
+                importTasksDb(user).then((tasks) => {
+                    io.to(`/admin-room`).emit('timesup', tasks);
+                    io.to(`/${task.username}-room`).emit('timesup', tasks);
+                });
                 clearInterval(timer);
             } else {
                 task['timeleft'] -= 10;
                 updateTaskDb(task);
-                io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
-                io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
+                importTasksDb(user).then((tasks) => {
+                    io.to(`/${task.username}-room`).emit('countdown', tasks);
+                    io.to(`/admin-room`).emit('countdown', tasks);
+                });
+
 
             }
         }, 10000);
@@ -297,12 +311,15 @@ io.on('connection', function(socket) {
     socket.on('finish', function(task) {
         task['timeleft'] = 0;
         task['status'] = 'done';
-        switchTask(task.username, task);
+        //switchTask(task.username, task);
         updateTaskDb(task);
-        importTasksDb(task.username);
+
         clearInterval(timer);
-        io.to(`/admin-room`).emit('userfinished', tasklist[task.username]);
-        io.to(`/${task.username}-room`).emit('userfinished', tasklist[task.username]);
+        importTasksDb(user).then((tasks) => {
+            io.to(`/admin-room`).emit('userfinished', tasks);
+            io.to(`/${task.username}-room`).emit('userfinished', tasks);
+        });
+
     });
 
 
@@ -310,10 +327,13 @@ io.on('connection', function(socket) {
     socket.on('cancel', function(task) {
         console.log('cancel', task);
         task['status'] = 'cancelled';
-        switchTask(task.username, task);
+        //switchTask(task.username, task);
         updateTaskDb(task);
-        io.to(`/admin-room`).emit('cancelled', tasklist[task.username]);
-        io.to(`/${task.username}-room`).emit('cancelled', tasklist[task.username]);
+                importTasksDb(user).then((tasks) => {
+        io.to(`/admin-room`).emit('cancelled', tasks);
+        io.to(`/${task.username}-room`).emit('cancelled', tasks);
+        });
+
         clearInterval(timer);
     });
 
