@@ -178,14 +178,12 @@ function switchTask(username, updatedTask) {
 function createTaskDb(task) {
     const date = new Date();
     const taskDb = new Task({ 'username': task.username, 'room': task.room, 'content': task.content, 'status': task.status, 'timeleft': task.timeleft, 'date': date });
-    taskDb.save()
+    return taskDb.save()
         .then(() => {
             console.log('Saved task');
-            //res.json({ 'success': true, 'msg': 'Saved' })
         })
         .catch((err) => {
             console.log(err);
-            //res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' });
         });
 }
 
@@ -257,12 +255,14 @@ io.on('connection', function(socket) {
         task['timeleft'] = 240;
 
         // tasklist[task.username].push(task);
-        
-        createTaskDb(task);
-        importTasksDb(task.username).then((tasks) => {
-            io.to(`/admin-room`).emit('usertasks', tasks);
-            io.to(`/${task.username}-room`).emit('taskreceived', task);
-        });
+
+        createTaskDb(task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/admin-room`).emit('usertasks', tasks);
+                io.to(`/${task.username}-room`).emit('taskreceived', task);
+            });
+        })
+
     });
 
     socket.on('gettasks', function(user) {
@@ -329,9 +329,9 @@ io.on('connection', function(socket) {
         task['status'] = 'cancelled';
         //switchTask(task.username, task);
         updateTaskDb(task);
-                importTasksDb(task.username).then((tasks) => {
-        io.to(`/admin-room`).emit('cancelled', tasks);
-        io.to(`/${task.username}-room`).emit('cancelled', tasks);
+        importTasksDb(task.username).then((tasks) => {
+            io.to(`/admin-room`).emit('cancelled', tasks);
+            io.to(`/${task.username}-room`).emit('cancelled', tasks);
         });
 
         clearInterval(timer);
