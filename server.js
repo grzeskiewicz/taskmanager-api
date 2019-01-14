@@ -213,7 +213,8 @@ function updateTaskDb(task) {
 function importTasksDb(username) {
     Task.find({ username: username })
         .then((tasks) => {
-            console.log(tasks);
+            //console.log(tasks);
+            return tasks;
         })
         .catch(() => { console.log({ 'msg': 'Sorry! Something went wrong.' }); });
 }
@@ -257,6 +258,7 @@ io.on('connection', function(socket) {
         io.to(`/${task.username}-room`).emit('taskreceived', task);
         io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
         createTaskDb(task);
+        console.log('newtask', importTasksDb(task.username));
     });
     //TODO: Tasklist replace task with statuses and timeleft
 
@@ -268,6 +270,7 @@ io.on('connection', function(socket) {
         task['status'] = 'pending';
         switchTask(task.username, task);
         updateTaskDb(task);
+        importTasksDb(task.username);
         io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
         io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
         timer = setInterval(() => {
@@ -297,6 +300,7 @@ io.on('connection', function(socket) {
         task['status'] = 'done';
         switchTask(task.username, task);
         updateTaskDb(task);
+        importTasksDb(task.username);
         clearInterval(timer);
         io.to(`/admin-room`).emit('userfinished', tasklist[task.username]);
         io.to(`/${task.username}-room`).emit('userfinished', tasklist[task.username]);
