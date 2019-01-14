@@ -276,7 +276,7 @@ io.on('connection', function(socket) {
         //switchTask(task.username, task);
         updateTaskDb(task);
 
-        importTasksDb(user).then((tasks) => {
+        importTasksDb(task.username).then((tasks) => {
             io.to(`/${task.username}-room`).emit('countdown', tasks);
             io.to(`/admin-room`).emit('countdown', tasks);
         });
@@ -288,7 +288,7 @@ io.on('connection', function(socket) {
                 //task['timeleft'] = 0;
                 //switchTask(task.username, task);
                 updateTaskDb(task);
-                importTasksDb(user).then((tasks) => {
+                importTasksDb(task.username).then((tasks) => {
                     io.to(`/admin-room`).emit('timesup', tasks);
                     io.to(`/${task.username}-room`).emit('timesup', tasks);
                 });
@@ -296,7 +296,7 @@ io.on('connection', function(socket) {
             } else {
                 task['timeleft'] -= 10;
                 updateTaskDb(task);
-                importTasksDb(user).then((tasks) => {
+                importTasksDb(task.username).then((tasks) => {
                     io.to(`/${task.username}-room`).emit('countdown', tasks);
                     io.to(`/admin-room`).emit('countdown', tasks);
                 });
@@ -315,7 +315,7 @@ io.on('connection', function(socket) {
         updateTaskDb(task);
 
         clearInterval(timer);
-        importTasksDb(user).then((tasks) => {
+        importTasksDb(task.username).then((tasks) => {
             io.to(`/admin-room`).emit('userfinished', tasks);
             io.to(`/${task.username}-room`).emit('userfinished', tasks);
         });
@@ -329,7 +329,7 @@ io.on('connection', function(socket) {
         task['status'] = 'cancelled';
         //switchTask(task.username, task);
         updateTaskDb(task);
-                importTasksDb(user).then((tasks) => {
+                importTasksDb(task.username).then((tasks) => {
         io.to(`/admin-room`).emit('cancelled', tasks);
         io.to(`/${task.username}-room`).emit('cancelled', tasks);
         });
