@@ -283,7 +283,7 @@ io.on('connection', function(socket) {
 
         timer = setInterval(() => {
             console.log(task);
-            if (task['timeleft'] === 0 && task['status'] !== 'cancelled') {
+            if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
                 task['status'] = 'timesup';
                 //task['timeleft'] = 0;
                 //switchTask(task.username, task);
