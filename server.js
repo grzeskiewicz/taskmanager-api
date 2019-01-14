@@ -211,9 +211,10 @@ function updateTaskDb(task) {
 function importTasksDb(username) {
     const day = new Date();
     const dayBeginning=day.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
+    console.log(dayBeginning.getTime());
+    //const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
     return Task.find({ username: username })
-    .where('date').gt(dayBeginning).lt(dayEnd)
+    //.where('date').gt(dayBeginning).lt(dayEnd)
         .then((tasks) => {
             return tasks
         })
