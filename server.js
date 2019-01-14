@@ -190,12 +190,28 @@ function createTaskDb(task) {
 }
 
 
-function updateTaskDb(task){
+function updateTaskDb(task) {
 
+    Task.findOne({ username: task.username, room: task.room, content: task.content }, function(err, taskDb) {
+        if (err) throw err;
+        if (taskDb) {
+            taskDb.set({ status: task.status, timeleft: task.timeleft });
+            taskDb.save()
+                .then(() => {
+                    console.log('Updated task');
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            //res.json({ success: false, msg: "No such user registered" });
+        }
+
+    });
 }
 
-function importTasksDb(username){
-Task.find({username: username})
+function importTasksDb(username) {
+    Task.find({ username: username })
         .then((tasks) => {
             console.log(tasks);
         })
@@ -241,7 +257,6 @@ io.on('connection', function(socket) {
         io.to(`/${task.username}-room`).emit('taskreceived', task);
         io.to(`/admin-room`).emit('usertasks', tasklist[task.username]);
         createTaskDb(task);
-        importTasksDb(task.username);
     });
     //TODO: Tasklist replace task with statuses and timeleft
 
@@ -252,6 +267,7 @@ io.on('connection', function(socket) {
     socket.on('accept', function(task) {
         task['status'] = 'pending';
         switchTask(task.username, task);
+        updateTaskDb(task);
         io.to(`/${task.username}-room`).emit('countdown', tasklist[task.username]);
         io.to(`/admin-room`).emit('countdown', tasklist[task.username]);
         timer = setInterval(() => {
