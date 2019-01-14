@@ -294,8 +294,8 @@ io.on('connection', function(socket) {
                         //clearInterval(timer);
                     });
                 });
-                
-            } else if (task['status']!=='timeup') {
+
+            } else if (task['status'] !== 'timeup') {
                 task['timeleft'] -= 10;
                 updateTaskDb(task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
@@ -322,7 +322,7 @@ io.on('connection', function(socket) {
             });
         });
 
-        
+
 
 
     });
@@ -337,9 +337,10 @@ io.on('connection', function(socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
+                clearInterval(timer);
             });
         });
-        clearInterval(timer);
+
     });
 
     socket.on('logout', function(user) {
