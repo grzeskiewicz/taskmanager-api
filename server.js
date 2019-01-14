@@ -318,10 +318,11 @@ io.on('connection', function(socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('userfinished', tasks);
                 io.to(`/${task.username}-room`).emit('userfinished', tasks);
+                clearInterval(timer);
             });
         });
 
-        clearInterval(timer);
+        
 
 
     });
