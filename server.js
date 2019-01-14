@@ -211,12 +211,15 @@ function updateTaskDb(task) {
 }
 
 function importTasksDb(username) {
+    let taskList;
     Task.find({ username: username })
         .then((tasks) => {
             //console.log(tasks);
-            return tasks;
+            taskList=tasks;
         })
         .catch(() => { console.log({ 'msg': 'Sorry! Something went wrong.' }); });
+
+        return taskList;
 }
 
 const userlist = new Set();
