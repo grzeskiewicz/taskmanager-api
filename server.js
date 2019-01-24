@@ -8,7 +8,10 @@ var express = require('express'),
 var cors = require('cors');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-const { body, validationResult } = require('express-validator/check');
+const {
+    body,
+    validationResult
+} = require('express-validator/check');
 var bodyParser = require('body-parser');
 const path = require('path');
 /*var corsOptions = {  //for reacts js 
@@ -17,7 +20,9 @@ const path = require('path');
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }*/
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.urlencoded({
+    extended: true
+})); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies 
 const User = mongoose.model('User');
 const Task = mongoose.model('Task');
@@ -44,7 +49,7 @@ mongoose.connection
 
 app.options('*', cors()) // include before other routes
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     let date = new Date();
     res.send(date);
 
@@ -53,7 +58,9 @@ app.get('/', function(req, res) {
 
 app.post('/createuser', [
         body('username')
-        .isLength({ min: 1 })
+        .isLength({
+            min: 1
+        })
         .withMessage('Please put content'),
     ],
     (req, res) => {
@@ -62,15 +69,26 @@ app.post('/createuser', [
             const data = req.body;
             const date = new Date();
 
-            const user = new User({ 'username': data.username, 'password': data.password, 'date': date, 'role': data.role });
+            const user = new User({
+                'username': data.username,
+                'password': data.password,
+                'date': date,
+                'role': data.role
+            });
             console.log(user);
             user.save()
                 .then(() => {
-                    res.json({ 'success': true, 'msg': 'Saved' })
+                    res.json({
+                        'success': true,
+                        'msg': 'Saved'
+                    })
                 })
                 .catch((err) => {
                     console.log(err);
-                    res.json({ 'success': false, 'msg': 'Sorry! Something went wrong.' });
+                    res.json({
+                        'success': false,
+                        'msg': 'Sorry! Something went wrong.'
+                    });
                 });
 
         } else {
@@ -87,16 +105,24 @@ app.get('/getusers', (req, res) => {
             res.json(users)
             console.log(users);
         })
-        .catch(() => { res.json({ 'msg': 'Sorry! Something went wrong.' }); });
+        .catch(() => {
+            res.json({
+                'msg': 'Sorry! Something went wrong.'
+            });
+        });
 });
 
 
 app.post('/authuser', [
         body('username')
-        .isLength({ min: 1 })
+        .isLength({
+            min: 1
+        })
         .withMessage('Please put content'),
         body('password')
-        .isLength({ min: 1 })
+        .isLength({
+            min: 1
+        })
         .withMessage('Please put content')
     ],
     (req, res) => {
@@ -104,12 +130,22 @@ app.post('/authuser', [
         if (errors.isEmpty()) {
             const data = req.body;
             // console.log(data);
-            User.findOne({ username: data.username }, function(err, user) {
+            User.findOne({
+                username: data.username
+            }, function (err, user) {
                 if (err) throw err;
                 // test a matching password
-                user.comparePassword(data.password, function(err, isMatch) {
+                user.comparePassword(data.password, function (err, isMatch) {
                     if (err) throw err;
-                    if (isMatch) res.json({ success: true, msg: 'Credentials are ok', token: 'JWT ' + jwt.sign({ username: user.username, id: user._id, role: user.role }, 'RESTFULAPIs') });
+                    if (isMatch) res.json({
+                        success: true,
+                        msg: 'Credentials are ok',
+                        token: 'JWT ' + jwt.sign({
+                            username: user.username,
+                            id: user._id,
+                            role: user.role
+                        }, 'RESTFULAPIs')
+                    });
                 });
             });
 
@@ -123,27 +159,42 @@ app.post('/authuser', [
 app.get('/memberinfo', (req, res) => {
     //console.log(req.headers);
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
-        jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function(err, decode) {
+        jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function (err, decode) {
             // console.log("DECODE: ");
             //console.log(decode);
             if (err) req.user = undefined;
             if (decode === undefined) {
-                res.json({ success: false, msg: "No token" });
+                res.json({
+                    success: false,
+                    msg: "No token"
+                });
             }
 
-            User.findOne({ username: decode.username }, function(err, user) {
+            User.findOne({
+                username: decode.username
+            }, function (err, user) {
                 if (err) throw err;
                 if (user) {
-                    res.json({ success: true, msg: decode.username, role: decode.role });
+                    res.json({
+                        success: true,
+                        msg: decode.username,
+                        role: decode.role
+                    });
                 } else {
-                    res.json({ success: false, msg: "No such user registered" });
+                    res.json({
+                        success: false,
+                        msg: "No such user registered"
+                    });
                 }
 
             });
             req.user = decode; //?
         });
     } else {
-        res.json({ success: false, msg: "Token not provided" });
+        res.json({
+            success: false,
+            msg: "Token not provided"
+        });
         req.user = undefined;
     }
 });
@@ -177,7 +228,14 @@ function switchTask(username, updatedTask) {
 
 function createTaskDb(task) {
     const date = new Date();
-    const taskDb = new Task({ 'username': task.username, 'room': task.room, 'content': task.content, 'status': task.status, 'timeleft': task.timeleft, 'date': date });
+    const taskDb = new Task({
+        'username': task.username,
+        'room': task.room,
+        'content': task.content,
+        'status': task.status,
+        'timeleft': task.timeleft,
+        'date': date
+    });
     return taskDb.save()
         .then(() => {
             console.log('Saved task');
@@ -190,10 +248,17 @@ function createTaskDb(task) {
 
 function updateTaskDb(task) {
 
-    return Task.findOne({ username: task.username, room: task.room, content: task.content }, function(err, taskDb) {
+    return Task.findOne({
+        username: task.username,
+        room: task.room,
+        content: task.content
+    }, function (err, taskDb) {
         if (err) throw err;
         if (taskDb) {
-            taskDb.set({ status: task.status, timeleft: task.timeleft });
+            taskDb.set({
+                status: task.status,
+                timeleft: task.timeleft
+            });
             taskDb.save()
                 .then(() => {
                     console.log('Updated task');
@@ -209,29 +274,39 @@ function updateTaskDb(task) {
 }
 
 function importTasksDb(username) {
-    const day=new Date();
-    const dayBeginning=new Date(day.setHours(0,0,0,0));
+    const day = new Date();
+    const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
     const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
-    return Task.find({ username: username, date: { $gt: dayBeginning, $lt: dayEnd } })
-   // .where('date').gt(dayBeginning).lt(dayEnd)
+    return Task.find({
+            username: username,
+            date: {
+                $gt: dayBeginning,
+                $lt: dayEnd
+            }
+        })
+        // .where('date').gt(dayBeginning).lt(dayEnd)
         .then((tasks) => {
             return tasks
         })
-        .catch(() => { console.log({ 'msg': 'Sorry! Something went wrong.' }); });
+        .catch(() => {
+            console.log({
+                'msg': 'Sorry! Something went wrong.'
+            });
+        });
 }
 
 const userlist = new Set();
 const tasklist = {};
 let timer;
 
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
     console.log('a user connected');
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function () {
         console.log('user disconnected');
     });
 
 
-    socket.on('logged', function(user) {
+    socket.on('logged', function (user) {
 
         console.log('logged');
         if (user !== 'admin') {
@@ -239,7 +314,9 @@ io.on('connection', function(socket) {
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
-            io.emit('userlist', { userlist: Array.from(userlist) });
+            io.emit('userlist', {
+                userlist: Array.from(userlist)
+            });
             importTasksDb(user).then((tasks) => {
                 io.to(`/${user}-room`).emit('usertasks', tasks);
             });
@@ -247,13 +324,15 @@ io.on('connection', function(socket) {
         } else {
             console.log('ADMIN JOINED');
             socket.join(`/${user}-room`);
-            io.emit('userlist', { userlist: Array.from(userlist) });
+            io.emit('userlist', {
+                userlist: Array.from(userlist)
+            });
         }
 
     });
 
 
-    socket.on('newtask', function(task) {
+    socket.on('newtask', function (task) {
         console.log('newtask');
         task['status'] = 'new';
         task['timeleft'] = 240;
@@ -269,13 +348,13 @@ io.on('connection', function(socket) {
 
     });
 
-    socket.on('gettasks', function(user) {
+    socket.on('gettasks', function (user) {
         importTasksDb(user).then((tasks) => {
             io.to(`/admin-room`).emit('usertasks', tasks);
         });
     });
 
-    socket.on('accept', function(task) {
+    socket.on('accept', function (task) {
         task['status'] = 'pending';
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
@@ -299,7 +378,7 @@ io.on('connection', function(socket) {
                     });
                 });
 
-            } else if (task['status'] !== 'timeup') {
+            } else if (task['status'] !== 'timesup') {
                 task['timeleft'] -= 10;
                 updateTaskDb(task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
@@ -314,7 +393,7 @@ io.on('connection', function(socket) {
     });
 
 
-    socket.on('finish', function(task) {
+    socket.on('finish', function (task) {
         task['timeleft'] = 0;
         task['status'] = 'done';
         //switchTask(task.username, task);
@@ -333,7 +412,7 @@ io.on('connection', function(socket) {
 
 
 
-    socket.on('cancel', function(task) {
+    socket.on('cancel', function (task) {
         console.log('cancel', task);
         task['status'] = 'cancelled';
         //switchTask(task.username, task);
@@ -347,10 +426,12 @@ io.on('connection', function(socket) {
 
     });
 
-    socket.on('logout', function(user) {
+    socket.on('logout', function (user) {
         userlist.delete(user);
         console.log(userlist);
-        io.emit('userlist', { userlist: Array.from(userlist) });
+        io.emit('userlist', {
+            userlist: Array.from(userlist)
+        });
 
     });
 
