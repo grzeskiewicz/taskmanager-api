@@ -21,6 +21,11 @@ const taskSchema = new mongoose.Schema({
         trim: true,
         required: true
     },
+    timetoaccept: {
+        type: Number,
+        trim: true,
+        required: true
+    },
     timeleft: {
         type: Number,
         trim: true,

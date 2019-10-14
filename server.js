@@ -57,12 +57,12 @@ app.get('/', function (req, res) {
 
 
 app.post('/createuser', [
-        body('username')
+    body('username')
         .isLength({
             min: 1
         })
         .withMessage('Please put content'),
-    ],
+],
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
@@ -114,17 +114,17 @@ app.get('/getusers', (req, res) => {
 
 
 app.post('/authuser', [
-        body('username')
+    body('username')
         .isLength({
             min: 1
         })
         .withMessage('Please put content'),
-        body('password')
+    body('password')
         .isLength({
             min: 1
         })
         .withMessage('Please put content')
-    ],
+],
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
@@ -233,6 +233,7 @@ function createTaskDb(task) {
         'room': task.room,
         'content': task.content,
         'status': task.status,
+        'timetoaccept': task.timetoaccept,
         'timeleft': task.timeleft,
         'date': date
     });
@@ -257,6 +258,7 @@ function updateTaskDb(task) {
         if (taskDb) {
             taskDb.set({
                 status: task.status,
+                timetoaccept: task.timetoaccept,
                 timeleft: task.timeleft
             });
             taskDb.save()
@@ -278,12 +280,12 @@ function importTasksDb(username) {
     const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
     const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
     return Task.find({
-            username: username,
-            date: {
-                $gt: dayBeginning,
-                $lt: dayEnd
-            }
-        })
+        username: username,
+        date: {
+            $gt: dayBeginning,
+            $lt: dayEnd
+        }
+    })
         // .where('date').gt(dayBeginning).lt(dayEnd)
         .then((tasks) => {
             return tasks
@@ -298,6 +300,7 @@ function importTasksDb(username) {
 const userlist = new Set();
 const tasklist = {};
 let timer;
+let acceptTimer;
 
 io.on('connection', function (socket) {
     console.log('a user connected');
@@ -335,7 +338,9 @@ io.on('connection', function (socket) {
     socket.on('newtask', function (task) {
         console.log('newtask');
         task['status'] = 'new';
+        task['timetoaccept'] = 120;
         task['timeleft'] = 240;
+
 
         // tasklist[task.username].push(task);
 
@@ -343,6 +348,15 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
+               /* acceptTimer = setInterval(() => {
+                    task['timetoaccept'] -= 10;
+                    updateTaskDb(task).then(() => {
+                        importTasksDb(task.username).then((tasks) => {
+                            io.to(`/${task.username}-room`).emit('countdown', tasks);
+                            io.to(`/admin-room`).emit('countdown', tasks);
+                        });
+                    });
+                }, 10000);*/
             });
         })
 
