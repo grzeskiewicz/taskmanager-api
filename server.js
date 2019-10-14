@@ -354,8 +354,12 @@ io.on('connection', function (socket) {
         acceptTimer = setInterval(() => {
             if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
                 task['status'] = 'overdue';
-                io.to(`/${task.username}-room`).emit('countdown', tasks);
-                io.to(`/admin-room`).emit('countdown', tasks);
+                updateTaskDb(task).then(() => {
+                    importTasksDb(task.username).then((tasks) => {
+                        io.to(`/${task.username}-room`).emit('overdue', tasks);
+                        io.to(`/admin-room`).emit('overdue', tasks);
+                    });
+                });
             } else {
 
                 task['timetoaccept'] -= 10;
