@@ -348,7 +348,7 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
-               /* acceptTimer = setInterval(() => {
+                acceptTimer = setInterval(() => {
                     task['timetoaccept'] -= 10;
                     updateTaskDb(task).then(() => {
                         importTasksDb(task.username).then((tasks) => {
@@ -356,7 +356,7 @@ io.on('connection', function (socket) {
                             io.to(`/admin-room`).emit('countdown', tasks);
                         });
                     });
-                }, 10000);*/
+                }, 10000);
             });
         })
 
