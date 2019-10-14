@@ -352,13 +352,20 @@ io.on('connection', function (socket) {
             });
         });
         acceptTimer = setInterval(() => {
-            task['timetoaccept'] -= 10;
-            updateTaskDb(task).then(() => {
-                importTasksDb(task.username).then((tasks) => {
-                    io.to(`/${task.username}-room`).emit('countdown', tasks);
-                    io.to(`/admin-room`).emit('countdown', tasks);
+            if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
+                task['status'] = 'overdue';
+                io.to(`/${task.username}-room`).emit('countdown', tasks);
+                io.to(`/admin-room`).emit('countdown', tasks);
+            } else {
+
+                task['timetoaccept'] -= 10;
+                updateTaskDb(task).then(() => {
+                    importTasksDb(task.username).then((tasks) => {
+                        io.to(`/${task.username}-room`).emit('countdown', tasks);
+                        io.to(`/admin-room`).emit('countdown', tasks);
+                    });
                 });
-            });
+            }
         }, 10000);
 
     });
