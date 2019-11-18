@@ -358,6 +358,7 @@ io.on('connection', function (socket) {
                     importTasksDb(task.username).then((tasks) => {
                         io.to(`/${task.username}-room`).emit('overdue', tasks);
                         io.to(`/admin-room`).emit('overdue', tasks);
+                        clearInterval(acceptTimer);
                     });
                 });
             } else {
@@ -387,6 +388,7 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
+                clearInterval(acceptTimer);
             });
         });
 
