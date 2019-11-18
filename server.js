@@ -449,6 +449,7 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
                 clearInterval(timer);
+                clearInterval(acceptTimer);
             });
         });
 
