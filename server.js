@@ -103,7 +103,7 @@ app.get('/getusers', (req, res) => {
     User.find()
         .then((users) => {
             const usernames=[];
-            for (const user of users) usernames.push(user.username);
+            for (const user of users) if (user.username !== "admin" ) usernames.push(user.username);
             res.json(usernames);
             console.log(usernames);
         })
