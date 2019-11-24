@@ -311,7 +311,7 @@ io.on('connection', function (socket) {
 
     socket.on('logged', function (user) {
 
-        console.log('logged');
+        console.log('logged',user);
         if (user !== 'admin') {
             if (!tasklist[user]) tasklist[user] = [];
             console.log('someone connected', user);
