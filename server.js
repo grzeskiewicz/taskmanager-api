@@ -102,8 +102,10 @@ app.post('/createuser', [
 app.get('/getusers', (req, res) => {
     User.find()
         .then((users) => {
-            res.json(users)
-            console.log(users);
+            const usernames=[];
+            for (const user of users) usernames.push(user.username);
+            res.json(usernames);
+            console.log(usernames);
         })
         .catch(() => {
             res.json({
@@ -311,7 +313,6 @@ io.on('connection', function (socket) {
 
     socket.on('logged', function (user) {
 
-        console.log('logged',user);
         if (user !== 'admin') {
             if (!tasklist[user]) tasklist[user] = [];
             console.log('someone connected', user);
