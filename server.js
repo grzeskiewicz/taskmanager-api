@@ -99,20 +99,17 @@ app.post('/createuser', [
 
 
 
-app.post('/changepassword', [
-    body('username')
-        .isLength({
-            min: 1
-        })
-        .withMessage('Please put content'),
-],
+app.post('/changepassword',
     (req, res) => {
+        console.log(req);
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             console.log("RESETUJEMY HEHE");
             const data = req.body;
-            res.json({ success: true, msg: data });
-
+            res.json({
+                'success': true,
+                'msg': 'Saved'
+            })
             /* User.findOne({
                  username: user.username,
              }, function (err, user) {
