@@ -109,6 +109,7 @@ app.post('/changepassword', [
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
+            console.log("RESETUJEMY HEHE");
             const data = req.body;
             res.json({ success: true, msg: data });
 
