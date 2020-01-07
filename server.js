@@ -99,11 +99,56 @@ app.post('/createuser', [
 
 
 
+app.post('/changepassword', [
+    body('username')
+        .isLength({
+            min: 1
+        })
+        .withMessage('Please put content'),
+],
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const data = req.body;
+            res.json({ success: true, msg: data });
+
+            /* User.findOne({
+                 username: user.username,
+             }, function (err, user) {
+                 if (err) throw err;
+                 if (user) {
+                     user.set({
+                         password: user.password
+                     });
+                     taskDb.save()
+                         .then(() => {
+                             console.log('Updated task');
+                         })
+                         .catch((err) => {
+                             console.log(err);
+                         });
+                 } else {
+                     //res.json({ success: false, msg: "No such user registered" });
+                 }
+ 
+             }); */
+
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
+
+
+
+
+
 app.get('/getusers', (req, res) => {
     User.find()
         .then((users) => {
-            const usernames=[];
-            for (const user of users) if (user.username !== "admin" ) usernames.push(user.username);
+            const usernames = [];
+            for (const user of users) if (user.username !== "admin") usernames.push(user.username);
             res.json(usernames);
             console.log(usernames);
         })
@@ -458,12 +503,12 @@ io.on('connection', function (socket) {
 
     socket.on('logout', function (user) {
         userlist.delete(user);
-      //  console.log(userlist);
+        //  console.log(userlist);
         io.emit('userlist', {
             userlist: Array.from(userlist)
         });
 
-        io.to(`/admin-room`).emit('userlogout', {username: user});
+        io.to(`/admin-room`).emit('userlogout', { username: user });
 
     });
 
