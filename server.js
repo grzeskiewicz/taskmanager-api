@@ -99,7 +99,7 @@ app.post('/createuser', [
 
 
 
-app.post('/changepassword',
+app.post('/resetpassword',
     (req, res) => {
         console.log(req);
         const errors = validationResult(req);
