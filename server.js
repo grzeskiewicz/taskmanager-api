@@ -101,26 +101,24 @@ app.post('/createuser', [
 
 app.post('/resetpassword',
     (req, res) => {
-        console.log(req);
         const errors = validationResult(req);
         if (errors.isEmpty()) {
-            console.log("RESETUJEMY HEHE");
-            const data = req.body;
-            res.json({
-                'success': true,
-                'msg': 'Saved'
-            })
-            /* User.findOne({
+            const user = req.body;
+             User.findOne({
                  username: user.username,
-             }, function (err, user) {
+             }, function (err, userRecord) {
                  if (err) throw err;
-                 if (user) {
-                     user.set({
+                 if (userRecord) {
+                     userRecord.set({
                          password: user.password
                      });
-                     taskDb.save()
+                     userRecord.save()
                          .then(() => {
-                             console.log('Updated task');
+                             console.log('Updated password');
+                             res.json({
+                                'success': true,
+                                'msg': 'Password changed nicely'
+                            });
                          })
                          .catch((err) => {
                              console.log(err);
@@ -129,7 +127,7 @@ app.post('/resetpassword',
                      //res.json({ success: false, msg: "No such user registered" });
                  }
  
-             }); */
+             }); 
 
         } else {
             res.send('Chuj!');
