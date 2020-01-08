@@ -141,13 +141,18 @@ app.post('/deleteuser',
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const user = req.body;
-            User.findOneAndRemove({
+            User.findOneAndDelete({
                 username: user.user,
             }, function (err) {
-                if (err) throw err;
+                if (err) { throw err } else {
+                    res.json({
+                        'success': true,
+                        'msg': 'User deleted!'
+                    });
+                }
             });
 
-            console.log("Usuniety");
+
 
 
         } else {
