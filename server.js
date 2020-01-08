@@ -138,6 +138,7 @@ app.post('/resetpassword',
 
 app.post('/deleteuser',
     (req, res) => {
+        console.log(req);
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const user = req.body;
