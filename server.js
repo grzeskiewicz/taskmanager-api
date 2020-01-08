@@ -141,7 +141,15 @@ app.post('/deleteuser',
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const user = req.body;
-            console.log(user);
+            User.findOneAndRemove({
+                username: user.user,
+            }, function (err) {
+                if (err) throw err;
+            });
+
+            console.log("Usuniety");
+
+
         } else {
             res.send('Chuj!');
         }
