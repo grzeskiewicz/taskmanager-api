@@ -531,6 +531,16 @@ io.on('connection', function (socket) {
 
     });
 
+
+    socket.on('newuser', function (user) {
+        userlist.push(user);
+
+        io.emit('userlist', {
+            userlist: Array.from(userlist)
+        });
+
+    });
+
     /* socket.on('ticketordered', function(ticket) {
          console.log('message: ' + ticket);
          io.emit('seatstakennow', { showing: ticket.showing, seats: ticket.seats });
