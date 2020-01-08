@@ -104,30 +104,30 @@ app.post('/resetpassword',
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const user = req.body;
-             User.findOne({
-                 username: user.username,
-             }, function (err, userRecord) {
-                 if (err) throw err;
-                 if (userRecord) {
-                     userRecord.set({
-                         password: user.password
-                     });
-                     userRecord.save()
-                         .then(() => {
-                             console.log('Updated password');
-                             res.json({
+            User.findOne({
+                username: user.username,
+            }, function (err, userRecord) {
+                if (err) throw err;
+                if (userRecord) {
+                    userRecord.set({
+                        password: user.password
+                    });
+                    userRecord.save()
+                        .then(() => {
+                            console.log('Updated password');
+                            res.json({
                                 'success': true,
                                 'msg': 'Password changed nicely'
                             });
-                         })
-                         .catch((err) => {
-                             console.log(err);
-                         });
-                 } else {
-                     //res.json({ success: false, msg: "No such user registered" });
-                 }
- 
-             }); 
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                } else {
+                    //res.json({ success: false, msg: "No such user registered" });
+                }
+
+            });
 
         } else {
             res.send('Chuj!');
@@ -136,7 +136,17 @@ app.post('/resetpassword',
 );
 
 
-
+app.post('/deleteuser',
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const user = req.body;
+            console.log(user);
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
 
 
 
