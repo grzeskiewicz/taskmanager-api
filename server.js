@@ -75,7 +75,7 @@ app.post('/createuser', [
                 'date': date,
                 'role': data.role
             });
-            console.log(user);
+            //console.log(user);
             user.save()
                 .then(() => {
                     res.json({
@@ -84,7 +84,7 @@ app.post('/createuser', [
                     })
                 })
                 .catch((err) => {
-                    console.log(err);
+                   // console.log(err);
                     res.json({
                         'success': false,
                         'msg': 'Sorry! Something went wrong.'
@@ -114,7 +114,7 @@ app.post('/resetpassword',
                     });
                     userRecord.save()
                         .then(() => {
-                            console.log('Updated password');
+                           // console.log('Updated password');
                             res.json({
                                 'success': true,
                                 'msg': 'Password changed nicely'
@@ -169,7 +169,7 @@ app.get('/getusers', (req, res) => {
             const usernames = [];
             for (const user of users) if (user.username !== "admin") usernames.push(user.username);
             res.json(usernames);
-            console.log(usernames);
+           // console.log(usernames);
         })
         .catch(() => {
             res.json({
