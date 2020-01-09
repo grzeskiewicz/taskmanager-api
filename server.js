@@ -533,8 +533,6 @@ io.on('connection', function (socket) {
 
 
     socket.on('newuser', function (user) {
-        //userlist.add(user.username);
-
         io.emit('userlist', {
             userlist: Array.from(userlist)
         });
