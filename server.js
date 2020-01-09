@@ -533,7 +533,7 @@ io.on('connection', function (socket) {
 
 
     socket.on('newuser', function (user) {
-        console.log(user);
+        console.log("Tutaj",user);
         userlist.add(user);
 
         io.emit('userlist', {
