@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 var express = require('express'),
     app = express();
 var cors = require('cors');
+app.use(cors());
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const {
@@ -19,7 +20,6 @@ const path = require('path');
   credentials:true,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }*/
-app.use(cors());
 app.use(bodyParser.urlencoded({
     extended: true
 })); // support encoded bodies
