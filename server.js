@@ -461,18 +461,18 @@ io.on('connection', function (socket) {
         timer = setInterval(() => {
             console.log(task);
             if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
-                task['status'] = 'timesup';
+                task['status'] = 'timeup';
                 //task['timeleft'] = 0;
                 //switchTask(task.username, task);
                 updateTaskDb(task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
-                        io.to(`/admin-room`).emit('timesup', tasks);
-                        io.to(`/${task.username}-room`).emit('timesup', tasks);
+                        io.to(`/admin-room`).emit('timeup', tasks);
+                        io.to(`/${task.username}-room`).emit('timeup', tasks);
                         clearInterval(timer);
                     });
                 });
 
-            } else if (task['status'] !== 'timesup') {
+            } else if (task['status'] !== 'timeup') {
                 task['timeleft'] -= 10;
                 updateTaskDb(task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
