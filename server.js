@@ -442,6 +442,7 @@ io.on('connection', function (socket) {
 
     socket.on('gettasks', function (user) {
         importTasksDb(user).then((tasks) => {
+            console.log("Sending tasks to admin",tasks,user);
             io.to(`/admin-room`).emit('usertasks', tasks);
         });
     });
