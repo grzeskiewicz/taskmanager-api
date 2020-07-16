@@ -386,7 +386,7 @@ io.on('connection', function (socket) {
                 userlist: Array.from(userlist)
             });
             importTasksDb(user).then((tasks) => {
-                io.to(`/${user}-room`).emit('usertasks', tasks);
+                io.to(`/${user}-room`).emit('usertasks-for-user', tasks);
             });
 
         } else {
