@@ -529,7 +529,7 @@ io.on('connection', function (socket) {
             userlist: Array.from(userlist)
         });
         io.to(`/admin-room`).emit('userlogout', { username: user });
-        socket.disconnect();
+        //socket.disconnect();
 
     });
 
