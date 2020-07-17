@@ -528,8 +528,8 @@ io.on('connection', function (socket) {
         io.emit('userlist', {
             userlist: Array.from(userlist)
         });
-
         io.to(`/admin-room`).emit('userlogout', { username: user });
+        socket.disconnect();
 
     });
 
