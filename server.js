@@ -428,7 +428,7 @@ io.on('connection', function (socket) {
                 });
             } else {
 
-                task['timetoaccept'] -= 10;
+                task['timetoaccept'] -= 5;
                 updateTaskDb(task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
                         io.to(`/${task.username}-room`).emit('countdown', tasks);
@@ -473,7 +473,7 @@ io.on('connection', function (socket) {
                 });
 
             } else if (task['status'] !== 'timeup') {
-                task['timeleft'] -= 10;
+                task['timeleft'] -= 5;
                 updateTaskDb(task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
                         io.to(`/${task.username}-room`).emit('countdown', tasks);
