@@ -524,6 +524,7 @@ io.on('connection', function (socket) {
     socket.on('logout', function (user) {
         userlist.delete(user);
         //  console.log(userlist);
+        console.log('logout',user)
         io.emit('userlist', {
             userlist: Array.from(userlist)
         });
