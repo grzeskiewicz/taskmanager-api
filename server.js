@@ -436,7 +436,7 @@ io.on('connection', function (socket) {
                     });
                 });
             }
-        }, 10000);
+        }, 5000);
 
     });
 
@@ -482,7 +482,7 @@ io.on('connection', function (socket) {
                 });
 
             }
-        }, 10000);
+        }, 5000);
 
     });
 
