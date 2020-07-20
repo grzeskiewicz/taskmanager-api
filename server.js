@@ -440,10 +440,11 @@ io.on('connection', function (socket) {
 
     });
 
-    socket.on('gettasks', function (user) {
+    socket.on('gettasks', function (user) { //this is only emitted by admin so I can use socket.emit
         importTasksDb(user).then((tasks) => {
             console.log("Sending tasks to admin",tasks,user);
-            io.to(`/admin-room`).emit('usertasks', tasks);
+            //io.to(`/admin-room`).emit('usertasks', tasks);
+            socket.emit('usertasks',tasks);
         });
     });
 
