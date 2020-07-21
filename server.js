@@ -84,7 +84,7 @@ app.post('/createuser', [
                     })
                 })
                 .catch((err) => {
-                   // console.log(err);
+                    // console.log(err);
                     res.json({
                         'success': false,
                         'msg': 'Sorry! Something went wrong.'
@@ -114,7 +114,7 @@ app.post('/resetpassword',
                     });
                     userRecord.save()
                         .then(() => {
-                           // console.log('Updated password');
+                            // console.log('Updated password');
                             res.json({
                                 'success': true,
                                 'msg': 'Password changed nicely'
@@ -145,6 +145,10 @@ app.post('/deleteuser',
                 username: user.user,
             }, function (err) {
                 if (err) { throw err } else {
+                    userlist.delete(user);
+                    io.to(`/admin-room`).emit('userlist', {
+                        userlist: Array.from(userlist)
+                    });
                     res.json({
                         'success': true,
                         'msg': 'User deleted!'
@@ -169,7 +173,7 @@ app.get('/getusers', (req, res) => {
             const usernames = [];
             for (const user of users) if (user.username !== "admin") usernames.push(user.username);
             res.json(usernames);
-           // console.log(usernames);
+            // console.log(usernames);
         })
         .catch(() => {
             res.json({
@@ -442,9 +446,9 @@ io.on('connection', function (socket) {
 
     socket.on('gettasks', function (user) { //this is only emitted by admin so I can use socket.emit
         importTasksDb(user).then((tasks) => {
-            console.log("Sending tasks to admin",tasks,user);
+            console.log("Sending tasks to admin", tasks, user);
             //io.to(`/admin-room`).emit('usertasks', tasks);
-            socket.emit('usertasks',tasks);
+            socket.emit('usertasks', tasks);
         });
     });
 
@@ -525,7 +529,7 @@ io.on('connection', function (socket) {
     socket.on('logout', function (user) {
         userlist.delete(user);
         //  console.log(userlist);
-        console.log('logout',user)
+        console.log('logout', user)
         io.emit('userlist', {
             userlist: Array.from(userlist)
         });
