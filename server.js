@@ -433,6 +433,9 @@ io.on('connection', function (socket) {
                     importTasksDb(task.username).then((tasks) => {
                         io.to(`/${task.username}-room`).emit('countdown', tasks);
                         io.to(`/admin-room`).emit('countdown', tasks);
+                        console.log(socket);
+                        console.log(io.sockets.adapter.rooms);
+                            
                     });
                 });
             }
