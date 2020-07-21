@@ -75,9 +75,12 @@ app.post('/createuser', [
                 'date': date,
                 'role': data.role
             });
-            //console.log(user);
             user.save()
                 .then(() => {
+                    userlist.add(user.username);
+                    io.to(`/admin-room`).emit('userlist', {
+                        userlist: Array.from(userlist)
+                    });
                     res.json({
                         'success': true,
                         'msg': 'Saved'
