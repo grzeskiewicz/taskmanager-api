@@ -106,6 +106,7 @@ app.post('/resetpassword',
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const user = req.body;
+            console.log(user);
             User.findOne({
                 username: user.username,
             }, function (err, userRecord) {
