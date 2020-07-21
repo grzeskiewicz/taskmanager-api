@@ -77,7 +77,6 @@ app.post('/createuser', [
             });
             user.save()
                 .then(() => {
-                    userlist.add(user.username);
                     io.to(`/admin-room`).emit('userlist', {
                         userlist: Array.from(userlist)
                     });
