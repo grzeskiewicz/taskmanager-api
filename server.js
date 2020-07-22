@@ -272,6 +272,39 @@ app.get('/memberinfo', (req, res) => {
     }
 });
 
+
+
+app.post('/gettasksday',
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const dateX = req.body;
+            console.log(dateX);
+            /*const day = new Date();
+            const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
+            const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
+            return Task.find({
+  
+                date: {
+                    $gt: dayBeginning,
+                    $lt: dayEnd
+                }
+            })
+                // .where('date').gt(dayBeginning).lt(dayEnd)
+                .then((tasks) => {
+                    return tasks
+                })
+                .catch(() => {
+                    console.log({
+                        'msg': 'Sorry! Something went wrong.'
+                    });
+                });*/
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
 function socketExists(user) {
     let sockets = io.sockets.sockets;
     for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
@@ -369,6 +402,30 @@ function importTasksDb(username) {
             });
         });
 }
+
+function importTasksDbSpecifiedDay(username, date) {
+    const day = new Date(date);
+    const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
+    const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
+    return Task.find({
+        username: username,
+        date: {
+            $gt: dayBeginning,
+            $lt: dayEnd
+        }
+    })
+        // .where('date').gt(dayBeginning).lt(dayEnd)
+        .then((tasks) => {
+            return tasks
+        })
+        .catch(() => {
+            console.log({
+                'msg': 'Sorry! Something went wrong.'
+            });
+        });
+}
+
+
 
 const userlist = new Set();
 const tasklist = {};
