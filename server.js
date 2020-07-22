@@ -278,7 +278,7 @@ app.post('/gettasksday',
     (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
-            const selectedDay = req.body;
+            const selectedDay = req.body.date;
             const day = Date.parse(selectedDay);
             console.log(selectedDay, day);
            // const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
