@@ -280,25 +280,22 @@ app.post('/gettasksday',
         if (errors.isEmpty()) {
             const selectedDay = req.body.date;
             const day = new Date(Date.parse(selectedDay));
-            console.log(selectedDay, day);
-           // const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
-           // const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
-            /*return Task.find({
-  
+            const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
+            const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
+            Task.find({
                 date: {
                     $gt: dayBeginning,
                     $lt: dayEnd
                 }
             })
-                // .where('date').gt(dayBeginning).lt(dayEnd)
                 .then((tasks) => {
-                    return tasks
+                    res.json({ tasks: tasks });
                 })
                 .catch(() => {
                     console.log({
                         'msg': 'Sorry! Something went wrong.'
                     });
-                });*/
+                });
         } else {
             res.send('Chuj!');
         }
