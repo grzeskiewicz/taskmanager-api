@@ -302,6 +302,43 @@ app.post('/gettasksday',
     }
 );
 
+
+
+
+app.post('/gettasksmonth',
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            //  const selectedDay = req.body.date;
+            //  const day = new Date(Date.parse(selectedDay));
+            const year = req.body.year;
+            const month = req.body.month;
+            const firstDayBeginning = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            //  const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
+            const lastDayEnd = new Date(lastDay.getTime() + 60 * 60 * 24 * 1000);
+
+            Task.find({
+                date: {
+                    $gt: firstDayBeginning,
+                    $lt: lastDayEnd
+                }
+            })
+                .then((tasks) => {
+                    res.json({ tasks: tasks });
+                })
+                .catch(() => {
+                    console.log({
+                        'msg': 'Sorry! Something went wrong.'
+                    });
+                });
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
 function socketExists(user) {
     let sockets = io.sockets.sockets;
     for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
