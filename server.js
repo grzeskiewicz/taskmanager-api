@@ -206,10 +206,16 @@ app.post('/authuser', [
             User.findOne({
                 username: data.username
             }, function (err, user) {
-                if (err) throw err;
+                if (err) {
+                    console.log(err);
+                    res.json({ success: false, msg: 'No such user!' });
+                };
                 // test a matching password
                 user.comparePassword(data.password, function (err, isMatch) {
-                    if (err) throw err;
+                    if (err) {
+                        console.log(err);
+                        res.json({ success: false, msg: 'Wrong password!' })
+                    }
                     if (isMatch) res.json({
                         success: true,
                         msg: 'Credentials are ok',
