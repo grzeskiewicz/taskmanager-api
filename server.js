@@ -210,6 +210,7 @@ app.post('/authuser', [
                 if (!user) {
                     console.log("hehe",err);
                     res.json({ success: false, msg: 'No such user!' });
+                    return;
                 };
                 // test a matching password
                 user.comparePassword(data.password, function (err, isMatch) {
