@@ -207,8 +207,8 @@ app.post('/authuser', [
                 username: data.username
             }, function (err, user) {
                 console.log(user);
-                if (err) {
-                    console.log(err);
+                if (!user) {
+                    console.log("hehe",err);
                     res.json({ success: false, msg: 'No such user!' });
                 };
                 // test a matching password
