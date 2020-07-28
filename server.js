@@ -594,6 +594,23 @@ io.on('connection', function (socket) {
             }
         }, 5000);
 
+
+        socket.on('reset', function (task) {
+            console.log(timer);
+            task['status'] = 'pending';
+            task['timetoaccept'] = 0;
+            task['timeleft'] = 240;
+            updateTaskDb(task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/admin-room`).emit('reset', tasks);
+                    io.to(`/${task.username}-room`).emit('reset', tasks);
+                   // clearInterval(timer);
+                   // clearInterval(acceptTimer);
+                });
+            });
+    
+        });
+
     });
 
 
@@ -632,21 +649,7 @@ io.on('connection', function (socket) {
     });
 
 
-    socket.on('reset', function (task) {
-        console.log('reset', task);
-        task['status'] = 'pending';
-        task['timetoaccept'] = 0;
-        task['timeleft'] = 240;
-        updateTaskDb(task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/admin-room`).emit('reset', tasks);
-                io.to(`/${task.username}-room`).emit('reset', tasks);
-               // clearInterval(timer);
-               // clearInterval(acceptTimer);
-            });
-        });
 
-    });
 
     socket.on('logout', function (user) {
         userlist.delete(user);
