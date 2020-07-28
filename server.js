@@ -427,7 +427,6 @@ function updateTaskDb(task) {
 
 function importTasksDb(username) {
     const day = new Date();
-    console.log(day);
     const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
     const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
     return Task.find({
@@ -471,6 +470,28 @@ function importTasksDbSpecifiedDay(username, date) {
 }
 
 
+function acceptTimerCountdown(task) {
+    if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
+        task['status'] = 'overdue';
+        updateTaskDb(task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/${task.username}-room`).emit('overdue', tasks);
+                io.to(`/admin-room`).emit('overdue', tasks);
+                clearInterval(acceptTimer);
+            });
+        });
+    } else {
+        task['timetoaccept'] -= 5;
+        updateTaskDb(task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/${task.username}-room`).emit('countdown', tasks);
+                io.to(`/admin-room`).emit('countdown', tasks);
+            });
+        });
+    }
+}
+
+
 function timerCountdown(task) {
     if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
         task['status'] = 'timeup';
@@ -509,7 +530,6 @@ io.on('connection', function (socket) {
 
 
     socket.on('logged', function (user) {
-
         if (user !== 'admin') {
             if (!tasklist[user]) tasklist[user] = [];
             console.log('someone connected', user);
@@ -539,43 +559,17 @@ io.on('connection', function (socket) {
         task['timetoaccept'] = 120;
         task['timeleft'] = 240;
 
-
-        // tasklist[task.username].push(task);
-
         createTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
-
             });
         });
-        acceptTimer = setInterval(() => {
-            if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
-                task['status'] = 'overdue';
-                updateTaskDb(task).then(() => {
-                    importTasksDb(task.username).then((tasks) => {
-                        io.to(`/${task.username}-room`).emit('overdue', tasks);
-                        io.to(`/admin-room`).emit('overdue', tasks);
-                        clearInterval(acceptTimer);
-                    });
-                });
-            } else {
-
-                task['timetoaccept'] -= 5;
-                updateTaskDb(task).then(() => {
-                    importTasksDb(task.username).then((tasks) => {
-                        io.to(`/${task.username}-room`).emit('countdown', tasks);
-                        io.to(`/admin-room`).emit('countdown', tasks);
-                    });
-                });
-            }
-        }, 5000);
-
+        acceptTimer = setInterval(() => acceptTimerCountdown(task), 5000);
     });
 
     socket.on('gettasks', function (user) { //this is only emitted by admin so I can use socket.emit
         importTasksDb(user).then((tasks) => {
-            console.log("Sending tasks to admin", tasks, user);
             //io.to(`/admin-room`).emit('usertasks', tasks);
             socket.emit('usertasks', tasks);
         });
@@ -632,7 +626,6 @@ io.on('connection', function (socket) {
 
 
     socket.on('reset', function (task) {
-        console.log(timer);
         task['status'] = 'pending';
         task['timetoaccept'] = 0;
         task['timeleft'] = 240;
