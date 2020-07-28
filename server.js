@@ -206,10 +206,10 @@ app.post('/authuser', [
             User.findOne({
                 username: data.username
             }, function (err, user) {
-                /*  if (!user) {
-                      res.json({ success: false, msg: 'No such user!' });
-                      return;
-                  }; */
+                if (!user) {
+                    res.json({ success: false, msg: 'No such user!' });
+                    return;
+                };
                 // test a matching password
                 user.comparePassword(data.password, function (err, isMatch) {
                     if (err) {
@@ -225,15 +225,11 @@ app.post('/authuser', [
                                 role: user.role
                             }, 'RESTFULAPIs')
                         });
-                    }
-                    /*else {
+                    } else {
                         res.json({ success: false, msg: 'Wrong password!' })
-                        //return;
-                    } */
+                        return;
+                    }
                 });
-            }).catch((err) => {
-                console.log(err);
-                res.json({ success: false, msg: 'User not found' })
             });
 
         } else {
