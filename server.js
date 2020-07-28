@@ -206,28 +206,34 @@ app.post('/authuser', [
             User.findOne({
                 username: data.username
             }, function (err, user) {
-                console.log(user);
                 if (!user) {
-                    console.log("hehe",err);
                     res.json({ success: false, msg: 'No such user!' });
                     return;
                 };
                 // test a matching password
                 user.comparePassword(data.password, function (err, isMatch) {
                     if (err) {
-                        console.log(err);
                         res.json({ success: false, msg: 'Wrong password!' })
                     }
-                    if (isMatch) res.json({
-                        success: true,
-                        msg: 'Credentials are ok',
-                        token: 'JWT ' + jwt.sign({
-                            username: user.username,
-                            id: user._id,
-                            role: user.role
-                        }, 'RESTFULAPIs')
-                    });
+                    if (isMatch) {
+                        res.json({
+                            success: true,
+                            msg: 'Credentials are ok',
+                            token: 'JWT ' + jwt.sign({
+                                username: user.username,
+                                id: user._id,
+                                role: user.role
+                            }, 'RESTFULAPIs')
+                        });
+                    }
+                    /*else {
+                        res.json({ success: false, msg: 'Wrong password!' })
+                        //return;
+                    } */
                 });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ success: false, msg: 'User not found' })
             });
 
         } else {
