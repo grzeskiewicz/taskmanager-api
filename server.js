@@ -413,7 +413,7 @@ function updateTaskDb(task) {
             });
             taskDb.save()
                 .then(() => {
-                    console.log('Updated task');
+                 //   console.log('Updated task');
                 })
                 .catch((err) => {
                     console.log(err);
