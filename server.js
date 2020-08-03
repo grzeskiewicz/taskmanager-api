@@ -414,7 +414,7 @@ function updateTaskDb(task) {
     }, function (err, taskDb) {
         if (err) throw err;
         if (taskDb) {
-            console.log("HEHEHEHE", taskDb.date===task.date);
+            console.log("HEHEHEHE", taskDb.date,task.date);
             taskDb.set({
                 status: task.status,
                 timetoaccept: task.timetoaccept,
