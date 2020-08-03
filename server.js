@@ -616,7 +616,6 @@ io.on('connection', function (socket) {
 
 
     socket.on('cancel', function (task) {
-        console.log('cancel', task);
         task['status'] = 'cancelled';
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
@@ -625,6 +624,7 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
                 clearInterval(timer);
                 clearInterval(acceptTimer);
+                console.log('cancel', task);
             });
         });
 
