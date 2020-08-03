@@ -384,7 +384,6 @@ function switchTask(username, updatedTask) {
 
 
 function createTaskDb(task) {
-    const date = new Date();
     const taskDb = new Task({
         'username': task.username,
         'room': task.room,
@@ -392,7 +391,7 @@ function createTaskDb(task) {
         'status': task.status,
         'timetoaccept': task.timetoaccept,
         'timeleft': task.timeleft,
-        'date': date
+        'date': task.date
     });
     return taskDb.save()
         .then(() => {
@@ -563,6 +562,8 @@ io.on('connection', function (socket) {
         task['status'] = 'new';
         task['timetoaccept'] = 120;
         task['timeleft'] = 240;
+        task['date'] = new Date();
+
         createTaskDb(task).then(() => {
             console.log("create task", task);
             importTasksDb(task.username).then((tasks) => {
