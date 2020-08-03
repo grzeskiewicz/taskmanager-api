@@ -413,6 +413,7 @@ function updateTaskDb(task) {
     }, function (err, taskDb) {
         if (err) throw err;
         if (taskDb) {
+            console.log(taskDb,task);
             taskDb.set({
                 status: task.status,
                 timetoaccept: task.timetoaccept,
@@ -420,8 +421,6 @@ function updateTaskDb(task) {
             });
             return taskDb.save()
                 .then(() => {
-                    console.log("Task in function, save", taskDb);
-                    //   console.log('Updated task');
                 })
                 .catch((err) => {
                     console.log(err);
@@ -435,7 +434,6 @@ function updateTaskDb(task) {
 }
 
 function importTasksDb(username) {
-    console.log("2");
     const day = new Date();
     const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
     const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
@@ -622,16 +620,11 @@ io.on('connection', function (socket) {
 
     socket.on('cancel', function (task) {
         task['status'] = 'cancelled';
-        //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
-            console.log("1");
             importTasksDb(task.username).then((tasks) => {
-                console.log("2, inside");
-                console.log(tasks);
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
                 if (timer !== undefined && acceptTimer !== undefined) {
-                    console.log(timer, acceptTimer);
                     clearInterval(timer);
                     clearInterval(acceptTimer);
                 }
