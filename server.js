@@ -413,6 +413,8 @@ function updateTaskDb(task) {
         date: task.date
     }, function (err, taskDb) {
         if (err) throw err;
+        console.log("HEHEHEHE", taskDb.date,task.date);
+
         if (taskDb) {
             console.log("HEHEHEHE", taskDb.date,task.date);
             taskDb.set({
