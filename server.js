@@ -493,6 +493,7 @@ function acceptTimerCountdown(task) {
 
 
 function timerCountdown(task) {
+    console.log(task);
     if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
