@@ -576,6 +576,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('accept', function (task) {
+        console.log('accept',task);
         task['status'] = 'pending';
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
