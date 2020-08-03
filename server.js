@@ -546,6 +546,7 @@ io.on('connection', function (socket) {
             io.emit('userlist', {
                 userlist: Array.from(userlist)
             });
+            console.log("NOT ADMIN, tasks")
             importTasksDb(user).then((tasks) => {
                 io.to(`/${user}-room`).emit('usertasks-for-user', tasks);
             });
@@ -577,6 +578,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('gettasks', function (user) { //this is only emitted by admin so I can use socket.emit
+        console.log('get tasks, admin socket');
         importTasksDb(user).then((tasks) => {
             //io.to(`/admin-room`).emit('usertasks', tasks);
             socket.emit('usertasks', tasks);
@@ -621,10 +623,10 @@ io.on('connection', function (socket) {
     socket.on('cancel', function (task) {
         task['status'] = 'cancelled';
         //switchTask(task.username, task);
-        updateTaskDb(task).then((res) => {
-            console.log(res,"1");
+        updateTaskDb(task).then(() => {
+            console.log("1");
             importTasksDb(task.username).then((tasks) => {
-                
+                console.log("2, inside");
                 console.log(tasks);
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
