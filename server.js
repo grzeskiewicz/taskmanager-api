@@ -414,20 +414,15 @@ function updateTaskDb(task) {
     }, function (err, taskDb) {
         if (err) throw err;
         if (taskDb) {
-            console.log("HEHEHEHE",taskDb.date,task.date);
+            console.log("HEHEHEHE", taskDb.date===task.date);
             taskDb.set({
                 status: task.status,
                 timetoaccept: task.timetoaccept,
                 timeleft: task.timeleft
             });
-            return taskDb.save()
-                .then(() => {
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            return taskDb.save();
         } else {
-
+            console.log("Task not found?");
             //res.json({ success: false, msg: "No such user registered" });
         }
 
