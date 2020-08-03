@@ -409,7 +409,8 @@ function updateTaskDb(task) {
     return Task.findOne({
         username: task.username,
         room: task.room,
-        content: task.content
+        content: task.content,
+        date: task.date
     }, function (err, taskDb) {
         if (err) throw err;
         if (taskDb) {
