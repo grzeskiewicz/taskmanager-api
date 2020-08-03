@@ -418,9 +418,8 @@ function updateTaskDb(task) {
                 timetoaccept: task.timetoaccept,
                 timeleft: task.timeleft
             });
-            taskDb.save()
+           return taskDb.save()
                 .then(() => {
-                    return true;
                     console.log("Task in function, save",taskDb);
                  //   console.log('Updated task');
                 })
@@ -630,6 +629,7 @@ io.on('connection', function (socket) {
                 console.log(tasks);
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
+                console.log(timer,acceptTimer);
                 clearInterval(timer);
                 clearInterval(acceptTimer);
                 console.log('cancel', task);
