@@ -420,6 +420,7 @@ function updateTaskDb(task) {
             });
             taskDb.save()
                 .then(() => {
+                    console.log(taskDb);
                  //   console.log('Updated task');
                 })
                 .catch((err) => {
