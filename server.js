@@ -394,9 +394,6 @@ function createTaskDb(task) {
         'date': task.date
     });
     return taskDb.save()
-        .then(() => {
-            console.log('Saved task');
-        })
         .catch((err) => {
             console.log(err);
         });
@@ -628,7 +625,6 @@ io.on('connection', function (socket) {
                     clearInterval(acceptTimer);
                 }
 
-                console.log('cancel', task);
             });
         });
 
@@ -654,7 +650,6 @@ io.on('connection', function (socket) {
 
     socket.on('logout', function (user) {
         userlist.delete(user);
-        //  console.log(userlist);
         console.log('logout', user)
         io.emit('userlist', {
             userlist: Array.from(userlist)
