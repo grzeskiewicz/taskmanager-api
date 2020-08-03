@@ -401,7 +401,6 @@ function createTaskDb(task) {
 
 
 function updateTaskDb(task) {
-    console.log("outside", task);
     return Task.findOne({
         username: task.username,
         room: task.room,
@@ -410,8 +409,6 @@ function updateTaskDb(task) {
     }, function (err, taskDb) {
         if (err) throw err;
         if (taskDb) {
-            console.log("Jestem");
-            console.log("HEHEHEHE", taskDb.date, task.date);
             taskDb.set({
                 status: task.status,
                 timetoaccept: task.timetoaccept,
@@ -420,7 +417,6 @@ function updateTaskDb(task) {
             return taskDb.save();
         } else {
             console.log("Task not found?");
-            console.log(task.date);
             //res.json({ success: false, msg: "No such user registered" });
         }
 
@@ -495,7 +491,6 @@ function acceptTimerCountdown(task) {
 
 
 function timerCountdown(task) {
-    console.log(task, "ONE TIME");
     if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
@@ -538,7 +533,6 @@ io.on('connection', function (socket) {
             io.emit('userlist', {
                 userlist: Array.from(userlist)
             });
-            console.log("NOT ADMIN, tasks")
             importTasksDb(user).then((tasks) => {
                 io.to(`/${user}-room`).emit('usertasks-for-user', tasks);
             });
@@ -555,14 +549,12 @@ io.on('connection', function (socket) {
 
 
     socket.on('newtask', function (task) {
-        console.log('newtask');
         task['status'] = 'new';
         task['timetoaccept'] = 120;
         task['timeleft'] = 240;
         task['date'] = new Date();
 
         createTaskDb(task).then(() => {
-            console.log("create task", task);
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
@@ -572,7 +564,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on('gettasks', function (user) { //this is only emitted by admin so I can use socket.emit
-        console.log('get tasks, admin socket');
         importTasksDb(user).then((tasks) => {
             //io.to(`/admin-room`).emit('usertasks', tasks);
             socket.emit('usertasks', tasks);
@@ -580,7 +571,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on('accept', function (task) {
-        console.log('accept', task);
         task['status'] = 'pending';
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
