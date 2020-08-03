@@ -420,7 +420,7 @@ function updateTaskDb(task) {
             });
             taskDb.save()
                 .then(() => {
-                    console.log(taskDb);
+                    console.log("Task in function, save",taskDb);
                  //   console.log('Updated task');
                 })
                 .catch((err) => {
@@ -621,6 +621,7 @@ io.on('connection', function (socket) {
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
+                console.log(tasks);
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
                 clearInterval(timer);
