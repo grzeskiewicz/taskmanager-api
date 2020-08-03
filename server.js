@@ -418,15 +418,16 @@ function updateTaskDb(task) {
                 timetoaccept: task.timetoaccept,
                 timeleft: task.timeleft
             });
-           return taskDb.save()
+            return taskDb.save()
                 .then(() => {
-                    console.log("Task in function, save",taskDb);
-                 //   console.log('Updated task');
+                    console.log("Task in function, save", taskDb);
+                    //   console.log('Updated task');
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         } else {
+
             //res.json({ success: false, msg: "No such user registered" });
         }
 
@@ -502,7 +503,7 @@ function acceptTimerCountdown(task) {
 
 
 function timerCountdown(task) {
-    console.log(task,"ONE TIME");
+    console.log(task, "ONE TIME");
     if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
@@ -585,7 +586,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('accept', function (task) {
-        console.log('accept',task);
+        console.log('accept', task);
         task['status'] = 'pending';
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
@@ -629,9 +630,12 @@ io.on('connection', function (socket) {
                 console.log(tasks);
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
-                console.log(timer,acceptTimer);
-                clearInterval(timer);
-                clearInterval(acceptTimer);
+                if (timer !== undefined && acceptTimer !== undefined) {
+                    console.log(timer, acceptTimer);
+                    clearInterval(timer);
+                    clearInterval(acceptTimer);
+                }
+
                 console.log('cancel', task);
             });
         });
