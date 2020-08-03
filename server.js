@@ -610,11 +610,8 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
-                if (timer !== undefined && acceptTimer !== undefined) {
-                    clearInterval(timer);
-                    clearInterval(acceptTimer);
-                }
-
+                clearInterval(timer);
+                clearInterval(acceptTimer);
             });
         });
 
