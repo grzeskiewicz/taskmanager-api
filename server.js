@@ -349,6 +349,13 @@ app.post('/gettasksmonth',
     }
 );
 
+
+
+const userlist = new Set();
+const tasklist = {};
+let timer;
+let acceptTimer;
+
 function socketExists(user) {
     let sockets = io.sockets.sockets;
     for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
@@ -493,7 +500,7 @@ function acceptTimerCountdown(task) {
 
 
 function timerCountdown(task) {
-    console.log(task);
+    console.log(task,"ONE TIME");
     if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
@@ -518,10 +525,7 @@ function timerCountdown(task) {
 
 
 
-const userlist = new Set();
-const tasklist = {};
-let timer;
-let acceptTimer;
+
 
 io.on('connection', function (socket) {
     console.log('a user connected');
