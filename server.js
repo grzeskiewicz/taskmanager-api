@@ -405,7 +405,7 @@ function createTaskDb(task) {
 
 
 function updateTaskDb(task) {
-
+console.log("outside",task.date);
     return Task.findOne({
         username: task.username,
         room: task.room,
@@ -413,9 +413,8 @@ function updateTaskDb(task) {
         date: task.date
     }, function (err, taskDb) {
         if (err) throw err;
-        console.log("HEHEHEHE", taskDb.date,task.date);
-
         if (taskDb) {
+            console.log("Jestem");
             console.log("HEHEHEHE", taskDb.date,task.date);
             taskDb.set({
                 status: task.status,
@@ -425,6 +424,7 @@ function updateTaskDb(task) {
             return taskDb.save();
         } else {
             console.log("Task not found?");
+            console.log(task.date);
             //res.json({ success: false, msg: "No such user registered" });
         }
 
