@@ -405,7 +405,7 @@ function createTaskDb(task) {
 
 
 function updateTaskDb(task) {
-console.log("outside",task.date);
+    console.log("outside", task);
     return Task.findOne({
         username: task.username,
         room: task.room,
@@ -415,7 +415,7 @@ console.log("outside",task.date);
         if (err) throw err;
         if (taskDb) {
             console.log("Jestem");
-            console.log("HEHEHEHE", taskDb.date,task.date);
+            console.log("HEHEHEHE", taskDb.date, task.date);
             taskDb.set({
                 status: task.status,
                 timetoaccept: task.timetoaccept,
@@ -563,7 +563,6 @@ io.on('connection', function (socket) {
         task['status'] = 'new';
         task['timetoaccept'] = 120;
         task['timeleft'] = 240;
-
         createTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
