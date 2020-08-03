@@ -418,7 +418,7 @@ function updateTaskDb(task) {
                 timetoaccept: task.timetoaccept,
                 timeleft: task.timeleft
             });
-            taskDb.save()
+           await taskDb.save()
                 .then(() => {
                     console.log("Task in function, save",taskDb);
                  //   console.log('Updated task');
