@@ -474,6 +474,7 @@ function acceptTimerCountdown(task) {
         console.log("overdue",task,acceptTimer);
         task['status'] = 'overdue';
         clearInterval(acceptTimer);
+        console.log("clearedInterval", acceptTimer);
        // clearInterval(timer); // ?
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
