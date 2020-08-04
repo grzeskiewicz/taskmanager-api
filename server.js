@@ -476,6 +476,7 @@ function acceptTimerCountdown(task) {
         clearInterval(acceptTimer);
         console.log("clearedInterval", acceptTimer);
        // clearInterval(timer); // ?
+       acceptTimer=undefined;
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('overdue', tasks);
