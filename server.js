@@ -470,6 +470,7 @@ function importTasksDbSpecifiedDay(username, date) {
 
 function acceptTimerCountdown(task) {
     if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
+        console.log("overdue",task);
         task['status'] = 'overdue';
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
@@ -590,7 +591,9 @@ io.on('connection', function (socket) {
         task['status'] = 'done';
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
+            console.log("Finish update db",task);
             importTasksDb(task.username).then((tasks) => {
+                console.log("Finish import",tasks);
                 io.to(`/admin-room`).emit('userfinished', tasks);
                 io.to(`/${task.username}-room`).emit('userfinished', tasks);
                 clearInterval(timer);
