@@ -607,11 +607,13 @@ io.on('connection', function (socket) {
     socket.on('cancel', function (task) {
         task['status'] = 'cancelled';
         updateTaskDb(task).then(() => {
+            console.log("Cancel",task);
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
                 clearInterval(timer);
                 clearInterval(acceptTimer);
+                console.log("Cancel import",tasks);
             });
         });
 
