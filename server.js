@@ -469,7 +469,7 @@ function importTasksDbSpecifiedDay(username, date) {
 
 
 function acceptTimerCountdown(task) {
-    console.log(task);
+    console.log("acceptTimer - task",task);
     if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') { //? status=overdue?
         console.log("overdue",task);
         task['status'] = 'overdue';
@@ -490,7 +490,7 @@ function acceptTimerCountdown(task) {
             });
         });
     } else{
-        console.log("OKURWAMAĆ ######");
+        console.log("OKURWAMAĆ ######")
         clearInterval(acceptTimer);
 
     }
@@ -498,7 +498,7 @@ function acceptTimerCountdown(task) {
 
 
 function timerCountdown(task) {
-    console.log(task);
+    console.log("Countdown timer - task",task);
     if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done' && task['status']!== 'timeup') { // ? status timeup?
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
