@@ -556,11 +556,11 @@ io.on('connection', function (socket) {
 
         createTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
+                acceptTimer = setInterval(() => acceptTimerCountdown(task), 5000);
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
             });
         });
-        acceptTimer = setInterval(() => acceptTimerCountdown(task), 5000);
     });
 
     socket.on('gettasks', function (user) { //this is only emitted by admin so I can use socket.emit
@@ -578,10 +578,10 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
                 clearInterval(acceptTimer);
+                timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
 
-        timer = setInterval(() => timerCountdown(task), 5000);
     });
 
 
