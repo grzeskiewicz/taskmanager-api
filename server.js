@@ -469,14 +469,15 @@ function importTasksDbSpecifiedDay(username, date) {
 
 
 function acceptTimerCountdown(task) {
-    if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
+    if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done' && task['status']!=='overdue') { //? status=overdue?
         console.log("overdue",task);
         task['status'] = 'overdue';
+        clearInterval(acceptTimer);
+        clearInterval(timer); // ?
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('overdue', tasks);
                 io.to(`/admin-room`).emit('overdue', tasks);
-                clearInterval(acceptTimer);
             });
         });
     } else {
