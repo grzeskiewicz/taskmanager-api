@@ -588,6 +588,7 @@ io.on('connection', function (socket) {
         task['status'] = 'pending';
         console.log("accept from socket", task);
         clearInterval(acceptTimer);
+        acceptTimer=null;
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
