@@ -583,7 +583,7 @@ io.on('connection', function (socket) {
 
     socket.on('accept', function (task) {
         task['status'] = 'pending';
-        console.log("accepttimer",acceptTimer );
+        console.log("accept from socket", task);
         clearInterval(acceptTimer);
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
