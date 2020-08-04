@@ -626,6 +626,8 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('reset', tasks);
                 io.to(`/${task.username}-room`).emit('reset', tasks);
+                console.log("Reset",task);
+                console.log(reset,tasks);
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
