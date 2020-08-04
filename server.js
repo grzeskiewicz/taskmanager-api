@@ -583,7 +583,7 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
-                timer = setInterval(timerCountdown(task), 5000);
+                timer = setInterval(()=>timerCountdown(task), 5000);
             });
         });
 
@@ -637,7 +637,7 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('reset', tasks);
            //     console.log("Reset",task);
              //   console.log("reset",tasks);
-                timer = setInterval(timerCountdown(task), 5000);
+                timer = setInterval(()=>timerCountdown(task), 5000);
             });
         });
 
