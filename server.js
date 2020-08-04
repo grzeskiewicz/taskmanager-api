@@ -565,7 +565,8 @@ io.on('connection', function (socket) {
         task['timeleft'] = 240;
         task['date'] = new Date();
 
-        createTaskDb(task).then(() => {
+        createTaskDb(task).then((res) => {
+            console.log("CREATE", res);
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
