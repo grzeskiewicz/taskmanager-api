@@ -560,10 +560,10 @@ io.on('connection', function (socket) {
 
         createTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
-                acceptTimer = setInterval(() => acceptTimerCountdown(task), 5000);
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
             });
+            acceptTimer = setInterval(() => acceptTimerCountdown(task), 5000);
         });
     });
 
@@ -576,12 +576,13 @@ io.on('connection', function (socket) {
 
     socket.on('accept', function (task) {
         task['status'] = 'pending';
+        console.log("accepttimer",acceptTimer );
+        clearInterval(acceptTimer);
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
-                clearInterval(acceptTimer);
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
