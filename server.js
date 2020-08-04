@@ -489,6 +489,10 @@ function acceptTimerCountdown(task) {
                 io.to(`/admin-room`).emit('countdown', tasks);
             });
         });
+    } else{
+        console.log("OKURWAMAĆ ######");
+        clearInterval(acceptTimer);
+
     }
 }
 
@@ -514,6 +518,9 @@ function timerCountdown(task) {
             });
         });
 
+    } else{
+        console.log("OKURWA MAĆ");
+        clearInterval(timer);
     }
 }
 
