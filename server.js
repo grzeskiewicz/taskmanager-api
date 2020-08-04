@@ -565,13 +565,12 @@ io.on('connection', function (socket) {
         task['timeleft'] = 240;
         task['date'] = new Date();
 
-        createTaskDb(task).then((res) => {
-            console.log("CREATE", res);
+        createTaskDb(task).then((taskDb) => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
-                io.to(`/${task.username}-room`).emit('taskreceived', task);
+                io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
             });
-            acceptTimer = setInterval(()=> acceptTimerCountdown(task), 5000);
+            acceptTimer = setInterval(()=> acceptTimerCountdown(taskDb), 5000);
         });
     });
 
@@ -583,6 +582,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('accept', function (task) {
+        console.log('accept from socket',task);
         task['status'] = 'pending';
         console.log("accept from socket", task);
         clearInterval(acceptTimer);
