@@ -470,7 +470,7 @@ function importTasksDbSpecifiedDay(username, date) {
 
 function acceptTimerCountdown(task) {
     console.log(task);
-    if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done' && task['status']!=='overdue') { //? status=overdue?
+    if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') { //? status=overdue?
         console.log("overdue",task);
         task['status'] = 'overdue';
         clearInterval(acceptTimer);
@@ -481,7 +481,7 @@ function acceptTimerCountdown(task) {
                 io.to(`/admin-room`).emit('overdue', tasks);
             });
         });
-    } else {
+    } else if (task['timetoaccept'] > 0) {
         task['timetoaccept'] -= 5;
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
@@ -563,7 +563,7 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
             });
-            acceptTimer = setInterval(() => acceptTimerCountdown(task), 5000);
+            acceptTimer = setInterval(acceptTimerCountdown(task), 5000);
         });
     });
 
@@ -583,7 +583,7 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
-                timer = setInterval(() => timerCountdown(task), 5000);
+                timer = setInterval(timerCountdown(task), 5000);
             });
         });
 
@@ -591,7 +591,7 @@ io.on('connection', function (socket) {
 
 
     socket.on('finish', function (task) {
-        task['timeleft'] = 0;
+       // task['timeleft'] = 0;
         task['status'] = 'done';
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
@@ -637,7 +637,7 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('reset', tasks);
            //     console.log("Reset",task);
              //   console.log("reset",tasks);
-                timer = setInterval(() => timerCountdown(task), 5000);
+                timer = setInterval(timerCountdown(task), 5000);
             });
         });
 
