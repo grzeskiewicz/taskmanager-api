@@ -469,6 +469,7 @@ function importTasksDbSpecifiedDay(username, date) {
 
 
 function acceptTimerCountdown(task) {
+    console.log(task);
     if (task['timetoaccept'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done' && task['status']!=='overdue') { //? status=overdue?
         console.log("overdue",task);
         task['status'] = 'overdue';
@@ -493,6 +494,7 @@ function acceptTimerCountdown(task) {
 
 
 function timerCountdown(task) {
+    console.log(task);
     if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done' && task['status']!== 'timeup') { // ? status timeup?
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
@@ -611,13 +613,13 @@ io.on('connection', function (socket) {
     socket.on('cancel', function (task) {
         task['status'] = 'cancelled';
         updateTaskDb(task).then(() => {
-            console.log("Cancel",task);
+           // console.log("Cancel",task);
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
                 clearInterval(timer);
                 clearInterval(acceptTimer);
-                console.log("Cancel import",tasks);
+             //   console.log("Cancel import",tasks);
             });
         });
 
@@ -626,14 +628,14 @@ io.on('connection', function (socket) {
 
     socket.on('reset', function (task) {
         task['status'] = 'pending';
-        task['timetoaccept'] = 0;
+        task['timetoaccept'] = 60;
         task['timeleft'] = 240;
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('reset', tasks);
                 io.to(`/${task.username}-room`).emit('reset', tasks);
-                console.log("Reset",task);
-                console.log("reset",tasks);
+           //     console.log("Reset",task);
+             //   console.log("reset",tasks);
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
