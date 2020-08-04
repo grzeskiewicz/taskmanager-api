@@ -563,7 +563,7 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', task);
             });
-            acceptTimer = setInterval(acceptTimerCountdown(task), 5000);
+            acceptTimer = setInterval(()=> acceptTimerCountdown(task), 5000);
         });
     });
 
