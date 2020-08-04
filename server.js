@@ -627,7 +627,7 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('reset', tasks);
                 io.to(`/${task.username}-room`).emit('reset', tasks);
                 console.log("Reset",task);
-                console.log(reset,tasks);
+                console.log("reset",tasks);
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
