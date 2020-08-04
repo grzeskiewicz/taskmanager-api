@@ -493,7 +493,7 @@ function acceptTimerCountdown(task) {
 
 
 function timerCountdown(task) {
-    if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done') {
+    if (task['timeleft'] === 0 && task['status'] !== 'cancelled' && task['status'] !== 'done' && task['status']!== 'timeup') { // ? status timeup?
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
