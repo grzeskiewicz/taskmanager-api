@@ -468,10 +468,9 @@ function importTasksDbSpecifiedDay(username, date) {
         });
 }
 
-
+let i = 0;
 
 function acceptTimerCountdown(task, acceptTimer,i) {
-    i++;
     console.log(i, task._id);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
@@ -567,14 +566,18 @@ io.on('connection', function (socket) {
         task['timetoaccept'] = 120;
         task['timeleft'] = 240;
         task['date'] = new Date();
-        
+
 
         createTaskDb(task).then((taskDb) => {
             importTasksDb(task.username).then((tasks) => {
-                let i=0;
+                let i = 0;
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
-                acceptTimer = setInterval(() => acceptTimerCountdown(taskDb, acceptTimer,i), 5000);
+                acceptTimer = setInterval(() => {
+                    i++;
+                    acceptTimerCountdown(taskDb, acceptTimer,i);
+                   
+                }, 5000);
             });
         });
     });
