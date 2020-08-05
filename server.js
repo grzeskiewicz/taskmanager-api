@@ -468,7 +468,7 @@ function importTasksDbSpecifiedDay(username, date) {
         });
 }
 
-//let timer;
+let timer;
 let acceptTimer;
 
 function acceptTimerCountdown(task, i) {
@@ -532,7 +532,7 @@ function timerCountdown(task) {
 
 
 io.on('connection', function (socket) {
-    let timer;
+   // let timer;
     //let acceptTimer;
     console.log('a user connected');
     socket.on('disconnect', function () {
