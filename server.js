@@ -355,6 +355,8 @@ const userlist = new Set();
 const tasklist = {};
 
 
+
+/*
 function socketExists(user) {
     let sockets = io.sockets.sockets;
     for (var socketId in sockets) { //check if the nsp already exists, don't create new one when logging in
@@ -379,7 +381,7 @@ function switchTask(username, updatedTask) {
             userTasks[taskElem] = updatedTask;
         }
     }
-}
+}*/
 
 
 function createTaskDb(task) {
@@ -570,8 +572,8 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
+                acceptTimer = setInterval(() => acceptTimerCountdown(taskDb,acceptTimer), 5000);
             });
-            acceptTimer = setInterval(() => acceptTimerCountdown(taskDb,acceptTimer), 5000);
         });
     });
 
