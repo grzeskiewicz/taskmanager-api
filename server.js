@@ -590,12 +590,14 @@ io.on('connection', function (socket) {
 
     socket.on('accept', function (task) {
         task['status'] = 'pending';
-        clearInterval(acceptTimer);
+
         //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
+                clearInterval(acceptTimer);
+                acceptTimer=null;
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
