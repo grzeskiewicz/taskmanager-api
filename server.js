@@ -468,10 +468,11 @@ function importTasksDbSpecifiedDay(username, date) {
         });
 }
 
-let timer;
+//let timer;
 let acceptTimer;
 
 function acceptTimerCountdown(task,i) {
+    console.log("acceptTimer",task._id,i);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
         clearInterval(this);
@@ -499,14 +500,14 @@ function acceptTimerCountdown(task,i) {
 
 
 function timerCountdown(task) {
-    console.log("Countdown timer - task", task);
+    console.log("Countdown timer - task", task._id);
     if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('timeup', tasks);
                 io.to(`/${task.username}-room`).emit('timeup', tasks);
-                clearInterval(timer);
+                clearInterval(this);
             });
         });
 
@@ -522,7 +523,7 @@ function timerCountdown(task) {
     } else {
         console.log("OKURWA MAĆ");
         console.log(task);
-        clearInterval(timer);
+        clearInterval(this);
     }
 }
 
@@ -531,7 +532,7 @@ function timerCountdown(task) {
 
 
 io.on('connection', function (socket) {
-   // let timer;
+    let timer;
   //  let acceptTimer;
     console.log('a user connected');
     socket.on('disconnect', function () {
