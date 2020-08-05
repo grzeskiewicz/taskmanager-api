@@ -482,7 +482,7 @@ function acceptTimerCountdown(task,acceptTimer) {
                 io.to(`/admin-room`).emit('overdue', tasks);
             });
         });
-    } else if (task['timetoaccept'] > 0) {
+    } else if (task['timetoaccept'] > 0 && task['status']==='new') {
         task['timetoaccept'] -= 5;
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
