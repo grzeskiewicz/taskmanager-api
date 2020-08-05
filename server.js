@@ -531,7 +531,7 @@ function timerCountdown(task) {
 
 
 io.on('connection', function (socket) {
-    let timer;
+   // let timer;
   //  let acceptTimer;
     console.log('a user connected');
     socket.on('disconnect', function () {
@@ -599,7 +599,7 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
-                timer = setInterval(() => timerCountdown(task, timer), 5000);
+                timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
 
