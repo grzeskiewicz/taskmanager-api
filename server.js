@@ -471,8 +471,8 @@ function importTasksDbSpecifiedDay(username, date) {
 //let timer;
 //let acceptTimer;
 
-function acceptTimerCountdown(task,i) {
-    console.log("acceptTimer",task._id,i);
+function acceptTimerCountdown(task, i) {
+    console.log("acceptTimer", task._id, i);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
         clearInterval(this);
@@ -576,7 +576,7 @@ io.on('connection', function (socket) {
                 let i = 0;
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
-                acceptTimer = setInterval(acceptTimerCountdown(taskDb,i), 5000);
+                acceptTimer = setInterval(() => acceptTimerCountdown(taskDb, i), 5000);
             });
         });
     });
@@ -597,7 +597,7 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
                 clearInterval(acceptTimer);
-                acceptTimer=null;
+                acceptTimer = null;
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
