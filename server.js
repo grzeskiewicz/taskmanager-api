@@ -469,8 +469,10 @@ function importTasksDbSpecifiedDay(username, date) {
 }
 
 let i = 0;
+let timer;
+let acceptTimer;
 
-function acceptTimerCountdown(task, acceptTimer,i) {
+function acceptTimerCountdown(task,i) {
     console.log(i, task._id);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
@@ -491,13 +493,14 @@ function acceptTimerCountdown(task, acceptTimer,i) {
         });
     } else {
         console.log("OKURWAMAĆ ######")
+        console.log(task);
         clearInterval(acceptTimer);
 
     }
 }
 
 
-function timerCountdown(task, timer) {
+function timerCountdown(task) {
     console.log("Countdown timer - task", task);
     if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
         task['status'] = 'timeup';
@@ -520,6 +523,7 @@ function timerCountdown(task, timer) {
 
     } else {
         console.log("OKURWA MAĆ");
+        console.log(task);
         clearInterval(timer);
     }
 }
