@@ -472,7 +472,7 @@ let timer;
 let acceptTimer;
 
 function acceptTimerCountdown(task,i) {
-    console.log(i, task._id);
+console.log("lol",this);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
         clearInterval(acceptTimer);
