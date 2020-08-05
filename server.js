@@ -616,6 +616,7 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('userfinished', tasks);
                 io.to(`/${task.username}-room`).emit('userfinished', tasks);
                 clearInterval(timer);
+                timer=null;
             });
         });
 
