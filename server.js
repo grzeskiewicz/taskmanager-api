@@ -472,10 +472,9 @@ let timer;
 let acceptTimer;
 
 function acceptTimerCountdown(task,i) {
-console.log("lol",this);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
-        clearInterval(acceptTimer);
+        clearInterval(this);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('overdue', tasks);
@@ -493,7 +492,7 @@ console.log("lol",this);
     } else {
         console.log("OKURWAMAĆ ######")
         console.log(task);
-        clearInterval(acceptTimer);
+        clearInterval(this);
 
     }
 }
