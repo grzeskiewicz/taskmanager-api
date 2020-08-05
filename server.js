@@ -468,7 +468,7 @@ function importTasksDbSpecifiedDay(username, date) {
         });
 }
 
-let timer;
+//let timer;
 let acceptTimer;
 
 function acceptTimerCountdown(task, i) {
@@ -511,7 +511,7 @@ function timerCountdown(task) {
             });
         });
 
-    } else if (task['status'] !== 'timeup') {
+    } else if (task['status'] !== 'timeup' && task['status'] === 'pending') {
         task['timeleft'] -= 5;
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
@@ -532,8 +532,7 @@ function timerCountdown(task) {
 
 
 io.on('connection', function (socket) {
-   // let timer;
-    //let acceptTimer;
+    let timer;
     console.log('a user connected');
     socket.on('disconnect', function () {
         console.log('user disconnected');
@@ -616,7 +615,7 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('userfinished', tasks);
                 io.to(`/${task.username}-room`).emit('userfinished', tasks);
                 clearInterval(timer);
-                timer=null;
+                timer = null;
             });
         });
 
