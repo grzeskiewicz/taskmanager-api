@@ -468,7 +468,6 @@ function importTasksDbSpecifiedDay(username, date) {
         });
 }
 
-let i = 0;
 let timer;
 let acceptTimer;
 
@@ -579,7 +578,7 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
                 acceptTimer = setInterval(() => {
                     i++;
-                    acceptTimerCountdown(taskDb, acceptTimer,i);
+                    acceptTimerCountdown(taskDb,i);
                    
                 }, 5000);
             });
