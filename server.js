@@ -472,10 +472,10 @@ function importTasksDbSpecifiedDay(username, date) {
 let acceptTimer;
 
 function acceptTimerCountdown(task, i) {
-    console.log("acceptTimer", task._id, i);
+    console.log("acceptTimer", task.room, i);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
-        clearInterval(this);
+     //   clearInterval(this);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('overdue', tasks);
@@ -493,14 +493,14 @@ function acceptTimerCountdown(task, i) {
     } else {
         console.log("OKURWAMAĆ ######")
         console.log(task);
-        clearInterval(this);
+     //   clearInterval(this);
 
     }
 }
 
 
 function timerCountdown(task) {
-    console.log("Countdown timer - task", task._id);
+    console.log("Countdown timer - task", task.room);
     if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
         task['status'] = 'timeup';
         updateTaskDb(task).then(() => {
