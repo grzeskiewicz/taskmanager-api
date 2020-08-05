@@ -469,7 +469,6 @@ function importTasksDbSpecifiedDay(username, date) {
 }
 
 //let timer;
-let acceptTimer;
 
 function acceptTimerCountdown(task, i) {
     console.log("acceptTimer", task.room, i);
@@ -596,7 +595,7 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
                 clearInterval(acceptTimer);
-                acceptTimer = null;
+               // acceptTimer = null;
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
