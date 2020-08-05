@@ -511,7 +511,7 @@ function timerCountdown(task) {
             });
         });
 
-    } else if (task['status'] !== 'timeup' && task['status'] === 'pending') {
+    } else if (task['timeleft'] > 0 && task['status'] === 'pending') {
         task['timeleft'] -= 5;
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
