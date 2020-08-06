@@ -574,7 +574,6 @@ function TaskObj(task) {
                     io.to(`/admin-room`).emit('countdown', tasks);
                 });
             });
-
         } else {
             console.log("OKURWAMAĆ ######");
         }
@@ -693,15 +692,13 @@ io.on('connection', function (socket) {
 
 
     socket.on('cancel', function (task) {
-        task['status'] = 'cancelled';
-        updateTaskDb(task).then(() => {
-            // console.log("Cancel",task);
+        const foundTask = findTask(task._id);
+        foundTask.task.status = 'cancelled';
+        updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('cancelled', tasks);
                 io.to(`/${task.username}-room`).emit('cancelled', tasks);
-                clearInterval(timer);
-                clearInterval(acceptTimer);
-                //   console.log("Cancel import",tasks);
+                foundTask.stopTimer();
             });
         });
 
@@ -709,16 +706,15 @@ io.on('connection', function (socket) {
 
 
     socket.on('reset', function (task) {
-        task['status'] = 'pending';
-        task['timetoaccept'] = 60;
-        task['timeleft'] = 240;
-        updateTaskDb(task).then(() => {
+        const foundTask = findTask(task._id);
+        foundTask.task.status = 'pending';
+        foundTask.task.timetoaccept = 60;
+        foundTask.task.timeleft = 240;
+        updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('reset', tasks);
                 io.to(`/${task.username}-room`).emit('reset', tasks);
-                //     console.log("Reset",task);
-                //   console.log("reset",tasks);
-                timer = setInterval(() => timerCountdown(task, timer), 5000);
+                foundTask.startTimer();
             });
         });
 
