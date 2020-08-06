@@ -352,7 +352,7 @@ app.post('/gettasksmonth',
 
 
 const userlist = new Set();
-const tasklist = [];
+const taskList = [];
 
 
 
@@ -548,7 +548,7 @@ io.on('connection', function (socket) {
 
     socket.on('logged', function (user) {
         if (user !== 'admin') {
-            if (!tasklist[user]) tasklist[user] = [];
+            if (!taskList[user]) taskList[user] = [];
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
@@ -576,15 +576,17 @@ io.on('connection', function (socket) {
         task['timeleft'] = 240;
         task['date'] = new Date();
 
-        const task1 = new TaskObj(task);
-        task1.greeting();
+     
 
         createTaskDb(task).then((taskDb) => {
+            const task1 = new TaskObj(task);
+          //  task1.greeting();
+            taskList.push(task1);
+            console.log(taskList);
             importTasksDb(task.username).then((tasks) => {
-                let i = 0;
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
-                acceptTimer = setInterval(() => acceptTimerCountdown(taskDb, i), 5000);
+               // acceptTimer = setInterval(() => acceptTimerCountdown(taskDb, i), 5000);
             });
         });
     });
