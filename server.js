@@ -470,8 +470,7 @@ function importTasksDbSpecifiedDay(username, date) {
 
 //let timer;
 
-function acceptTimerCountdown(task, i) {
-    console.log("acceptTimer", task.room, i);
+function acceptTimerCountdown(task) {
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
         //   clearInterval(this);
@@ -490,10 +489,7 @@ function acceptTimerCountdown(task, i) {
             });
         });
     } else {
-        console.log("OKURWAMAĆ ######")
-        console.log(task);
-        //   clearInterval(this);
-
+        console.log("OKURWAMAĆ ######");
     }
 }
 
@@ -520,22 +516,56 @@ function timerCountdown(task) {
         });
 
     } else {
-        console.log("OKURWA MAĆ");
-        console.log(task);
+        console.log("OKURWA MAĆ")
         clearInterval(this);
     }
 }
 
 
 
-function TaskObj(taskData) {
+function TaskObj(task) {
+    this.task = task;
+
     this.timer;
     this.acceptTimer;
-    this.task = taskData;
 
-    this.greeting = function () {
-        console.log("TaskObj",this.task);
-    };
+
+    this.startAcceptTimer = function () {
+        this.acceptTimer = setInterval(() => this.acceptTimerCountdown(this.task), 5000);
+    }
+
+    this.stopAcceptTimer = function () {
+        clearInterval(this.acceptTimer);
+        this.acceptTimer = null;
+    }
+
+    this.acceptTimerCountdown = function (task) {
+        if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
+            task['status'] = 'overdue';
+            //   clearInterval(this);
+
+        } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
+            task['timetoaccept'] -= 5;
+            console.log(task);
+
+        } else {
+            console.log("OKURWAMAĆ ######");
+        }
+    }
+
+
+    this.timerCountdown = function (task) {
+        console.log("Countdown timer - task", task.room);
+        if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
+            task['status'] = 'timeup';
+        } else if (task['timeleft'] > 0 && task['status'] === 'pending') {
+            task['timeleft'] -= 5;
+        } else {
+            console.log("OKURWA MAĆ")
+            //            clearInterval(this);
+        }
+    }
+
 }
 
 io.on('connection', function (socket) {
@@ -548,7 +578,7 @@ io.on('connection', function (socket) {
 
     socket.on('logged', function (user) {
         if (user !== 'admin') {
-           // if (!taskList[user]) taskList[user] = [];
+            // if (!taskList[user]) taskList[user] = [];
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
@@ -576,17 +606,17 @@ io.on('connection', function (socket) {
         task['timeleft'] = 240;
         task['date'] = new Date();
 
-     
+
 
         createTaskDb(task).then((taskDb) => {
             const task1 = new TaskObj(taskDb);
-            //task1.greeting();
             taskList.push(task1);
-            console.log(taskList);
+            task1.startAcceptTimer();
+
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
-               // acceptTimer = setInterval(() => acceptTimerCountdown(taskDb, i), 5000);
+                // acceptTimer = setInterval(() => acceptTimerCountdown(taskDb, i), 5000);
             });
         });
     });
