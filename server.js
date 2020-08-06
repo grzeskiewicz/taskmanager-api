@@ -650,15 +650,16 @@ io.on('connection', function (socket) {
     socket.on('accept', function (task) {
        // task['status'] = 'pending';
         const foundTask = findTask(task._id);
+        console.log("?eee",taskList.foundTask);
         foundTask.task.status='pending';
-        updateTaskDb(task).then(() => {
+        updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
                 //  clearInterval(acceptTimer);
                 // acceptTimer = null;
                 //timer = setInterval(() => timerCountdown(task), 5000);
-                console.log(taskList);
+               // console.log(taskList);
             });
         });
 
