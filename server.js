@@ -350,9 +350,7 @@ app.post('/gettasksmonth',
 );
 
 
-
-const userlist = new Set();
-const taskList = [];
+//==========================================================================================================================
 
 
 
@@ -382,6 +380,90 @@ function switchTask(username, updatedTask) {
         }
     }
 }*/
+
+
+/*
+function importTasksDbSpecifiedDay(username, date) {
+    const day = new Date(date);
+    const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
+    const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
+    return Task.find({
+        username: username,
+        date: {
+            $gt: dayBeginning,
+            $lt: dayEnd
+        }
+    })
+        // .where('date').gt(dayBeginning).lt(dayEnd)
+        .then((tasks) => {
+            return tasks
+        })
+        .catch(() => {
+            console.log({
+                'msg': 'Sorry! Something went wrong.'
+            });
+        });
+} */
+
+//let timer;
+
+/*
+function acceptTimerCountdown(task) {
+    if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
+        task['status'] = 'overdue';
+        //   clearInterval(this);
+        updateTaskDb(task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/${task.username}-room`).emit('overdue', tasks);
+                io.to(`/admin-room`).emit('overdue', tasks);
+            });
+        });
+    } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
+        task['timetoaccept'] -= 5;
+        updateTaskDb(task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/${task.username}-room`).emit('countdown', tasks);
+                io.to(`/admin-room`).emit('countdown', tasks);
+            });
+        });
+    } else {
+        console.log("OKURWAMAĆ ######");
+    }
+} */
+
+/*
+function timerCountdown(task) {
+    console.log("Countdown timer - task", task.room);
+    if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
+        task['status'] = 'timeup';
+        updateTaskDb(task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/admin-room`).emit('timeup', tasks);
+                io.to(`/${task.username}-room`).emit('timeup', tasks);
+                clearInterval(this);
+            });
+        });
+
+    } else if (task['timeleft'] > 0 && task['status'] === 'pending') {
+        task['timeleft'] -= 5;
+        updateTaskDb(task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/${task.username}-room`).emit('countdown', tasks);
+                io.to(`/admin-room`).emit('countdown', tasks);
+            });
+        });
+
+    } else {
+        console.log("OKURWA MAĆ")
+        clearInterval(this);
+    }
+} */
+
+
+
+const userlist = new Set();
+const taskList = [];
+
 
 
 function createTaskDb(task) {
@@ -418,7 +500,6 @@ function updateTaskDb(task) {
             return taskDb.save();
         } else {
             console.log("Task not found?");
-            //res.json({ success: false, msg: "No such user registered" });
         }
 
     });
@@ -434,101 +515,17 @@ function importTasksDb(username) {
             $gt: dayBeginning,
             $lt: dayEnd
         }
-    })
-        // .where('date').gt(dayBeginning).lt(dayEnd)
-        .then((tasks) => {
-            return tasks
-        })
+    }).then(tasks => tasks)
         .catch(() => {
             console.log({
                 'msg': 'Sorry! Something went wrong.'
             });
         });
 }
-
-function importTasksDbSpecifiedDay(username, date) {
-    const day = new Date(date);
-    const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
-    const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
-    return Task.find({
-        username: username,
-        date: {
-            $gt: dayBeginning,
-            $lt: dayEnd
-        }
-    })
-        // .where('date').gt(dayBeginning).lt(dayEnd)
-        .then((tasks) => {
-            return tasks
-        })
-        .catch(() => {
-            console.log({
-                'msg': 'Sorry! Something went wrong.'
-            });
-        });
-}
-
-//let timer;
-
-/*
-function acceptTimerCountdown(task) {
-    if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
-        task['status'] = 'overdue';
-        //   clearInterval(this);
-        updateTaskDb(task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/${task.username}-room`).emit('overdue', tasks);
-                io.to(`/admin-room`).emit('overdue', tasks);
-            });
-        });
-    } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
-        task['timetoaccept'] -= 5;
-        updateTaskDb(task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/${task.username}-room`).emit('countdown', tasks);
-                io.to(`/admin-room`).emit('countdown', tasks);
-            });
-        });
-    } else {
-        console.log("OKURWAMAĆ ######");
-    }
-} */
-
-
-function timerCountdown(task) {
-    console.log("Countdown timer - task", task.room);
-    if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
-        task['status'] = 'timeup';
-        updateTaskDb(task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/admin-room`).emit('timeup', tasks);
-                io.to(`/${task.username}-room`).emit('timeup', tasks);
-                clearInterval(this);
-            });
-        });
-
-    } else if (task['timeleft'] > 0 && task['status'] === 'pending') {
-        task['timeleft'] -= 5;
-        updateTaskDb(task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/${task.username}-room`).emit('countdown', tasks);
-                io.to(`/admin-room`).emit('countdown', tasks);
-            });
-        });
-
-    } else {
-        console.log("OKURWA MAĆ")
-        clearInterval(this);
-    }
-}
-
 
 
 function findTask(id) {
-    return taskList.find(element => {
-        //  console.log(String(element.task._id), String(id));
-        return String(element.task._id) === String(id)
-    });
+    return taskList.find(element => String(element.task._id) === String(id));
 }
 
 function TaskObj(task) {
@@ -556,8 +553,6 @@ function TaskObj(task) {
         clearInterval(this.timer);
         this.timer = null;
     }
-
-
 
 
     this.acceptTimerCountdown = function (task) {
@@ -649,8 +644,6 @@ io.on('connection', function (socket) {
         task['timeleft'] = 240;
         task['date'] = new Date();
 
-
-
         createTaskDb(task).then((taskDb) => {
             const task1 = new TaskObj(taskDb);
             taskList.push(task1);
@@ -671,7 +664,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on('accept', function (task) {
-        // task['status'] = 'pending';
         const foundTask = findTask(task._id);
         foundTask.task.status = 'pending';
         updateTaskDb(foundTask.task).then(() => {
@@ -680,10 +672,6 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('countdown', tasks);
                 foundTask.stopAcceptTimer();
                 foundTask.startTimer();
-                //  clearInterval(acceptTimer);
-                // acceptTimer = null;
-                //timer = setInterval(() => timerCountdown(task), 5000);
-                // console.log(taskList);
             });
         });
 
@@ -691,7 +679,6 @@ io.on('connection', function (socket) {
 
 
     socket.on('finish', function (task) {
-        // task['timeleft'] = 0;
         const foundTask = findTask(task._id);
         foundTask.task.status = 'done';
         updateTaskDb(foundTask.task).then(() => {
