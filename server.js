@@ -525,7 +525,11 @@ function timerCountdown(task) {
 
 
 function findTask(id) {
-    return taskList.find(element => Number(element.task._id) === Number(id));
+    return taskList.find(element => {
+        console.log(element);
+       return Number(element.task._id) === Number(id)
+    
+    });
 }
 
 function TaskObj(task) {
@@ -647,7 +651,7 @@ io.on('connection', function (socket) {
     socket.on('accept', function (task) {
         task['status'] = 'pending';
         const foundTask = findTask(task._id);
-        console.log("found task", foundTask, task._id);
+      //  console.log("found task", foundTask, task._id);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
