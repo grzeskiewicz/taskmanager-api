@@ -592,7 +592,6 @@ function TaskObj(task) {
             task['status'] = 'timeup';
             updateTaskDb(task).then(() => {
                 importTasksDb(task.username).then((tasks) => {
-                    console.log(tasks);
                     io.to(`/admin-room`).emit('timeup', tasks);
                     io.to(`/${task.username}-room`).emit('timeup', tasks);
                     this.stopTimer();
