@@ -464,14 +464,11 @@ function timerCountdown(task) {
 const userlist = new Set();
 const taskList = [];
 
-tasksOnly = [];
 
 
 function prepareTasks() {
-    const tasks = taskList.map((task, index) => {
-        return task.task;
-    })
-    console.log(tasks);
+    const tasks = taskList.map(task => task.task);
+    return tasks;
 }
 
 
@@ -595,6 +592,7 @@ function TaskObj(task) {
             task['status'] = 'timeup';
             updateTaskDb(task).then(() => {
                 importTasksDb(task.username).then((tasks) => {
+                    console.log(tasks);
                     io.to(`/admin-room`).emit('timeup', tasks);
                     io.to(`/${task.username}-room`).emit('timeup', tasks);
                     this.stopTimer();
