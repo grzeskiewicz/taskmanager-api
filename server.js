@@ -524,6 +524,10 @@ function timerCountdown(task) {
 
 
 
+function findTask(id) {
+    return taskList.find(element => element.task._id === id);
+}
+
 function TaskObj(task) {
     this.task = task;
 
@@ -550,7 +554,7 @@ function TaskObj(task) {
                     io.to(`/admin-room`).emit('overdue', tasks);
                 });
             });
-            
+
         } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
             task['timetoaccept'] -= 5;
             console.log(task._id, task.room, task.timetoaccept);
@@ -629,7 +633,6 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
-                // acceptTimer = setInterval(() => acceptTimerCountdown(taskDb, i), 5000);
             });
         });
     });
@@ -643,8 +646,8 @@ io.on('connection', function (socket) {
 
     socket.on('accept', function (task) {
         task['status'] = 'pending';
-
-        //switchTask(task.username, task);
+        const foundTask = findTask(task._id);
+        console.log("found task",foundTask,task._id);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
@@ -661,7 +664,6 @@ io.on('connection', function (socket) {
     socket.on('finish', function (task) {
         // task['timeleft'] = 0;
         task['status'] = 'done';
-        //switchTask(task.username, task);
         updateTaskDb(task).then(() => {
             console.log("Finish update db", task);
             importTasksDb(task.username).then((tasks) => {
