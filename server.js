@@ -546,7 +546,7 @@ function TaskObj(task) {
 
         } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
             task['timetoaccept'] -= 5;
-            console.log(task._id, task.room,task.timeleft);
+            console.log(task._id, task.room,task.timetoaccept);
 
         } else {
             console.log("OKURWAMAĆ ######");
