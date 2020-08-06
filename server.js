@@ -527,7 +527,7 @@ function timerCountdown(task) {
 function findTask(id) {
     console.log(id);
     for(const el of taskList){
-        console.log(el.task);
+        console.log(el.task._id,id);
     }
     return taskList.find(element => element.task._id === id);
 }
@@ -658,7 +658,7 @@ io.on('connection', function (socket) {
                 io.to(`/admin-room`).emit('countdown', tasks);
               //  clearInterval(acceptTimer);
                 // acceptTimer = null;
-                timer = setInterval(() => timerCountdown(task), 5000);
+                //timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
 
