@@ -468,7 +468,7 @@ tasksOnly = [];
 
 
 function prepareTasks() {
-    const tasks = tasksList.map((task, index) => {
+    const tasks = taskList.map((task, index) => {
         return task.task;
     })
     console.log(tasks);
