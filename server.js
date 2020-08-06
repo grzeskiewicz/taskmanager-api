@@ -542,11 +542,11 @@ function TaskObj(task) {
     this.acceptTimerCountdown = function (task) {
         if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
             task['status'] = 'overdue';
-            //   clearInterval(this);
+              clearInterval(this.acceptTimer);
 
         } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
             task['timetoaccept'] -= 5;
-            console.log(task);
+            console.log(task._id, task.room,task.timeleft);
 
         } else {
             console.log("OKURWAMAĆ ######");
