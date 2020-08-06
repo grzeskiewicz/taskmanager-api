@@ -534,7 +534,7 @@ function TaskObj(taskData) {
     this.task = taskData;
 
     this.greeting = function () {
-        console.log("TaskObj",this.taskData);
+        console.log("TaskObj",this.task);
     };
 }
 
