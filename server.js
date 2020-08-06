@@ -527,9 +527,8 @@ function timerCountdown(task) {
 function findTask(id) {
     return taskList.find(element => {
 
-        console.log("tsk", element.task);
+        console.log(Number(element.task._id), Number(id), Number(element.task._id) === Number(id));
         return Number(element.task._id) === Number(id)
-
     });
 }
 
