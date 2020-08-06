@@ -548,7 +548,7 @@ io.on('connection', function (socket) {
 
     socket.on('logged', function (user) {
         if (user !== 'admin') {
-            if (!taskList[user]) taskList[user] = [];
+           // if (!taskList[user]) taskList[user] = [];
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
@@ -580,7 +580,7 @@ io.on('connection', function (socket) {
 
         createTaskDb(task).then((taskDb) => {
             const task1 = new TaskObj(taskDb);
-            task1.greeting();
+            //task1.greeting();
             taskList.push(task1);
             console.log(taskList);
             importTasksDb(task.username).then((tasks) => {
