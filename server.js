@@ -525,6 +525,10 @@ function timerCountdown(task) {
 
 
 function findTask(id) {
+    console.log(id);
+    for(const el of taskList){
+        console.log(el);
+    }
     return taskList.find(element => element.task._id === id);
 }
 
@@ -652,7 +656,7 @@ io.on('connection', function (socket) {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
-                clearInterval(acceptTimer);
+              //  clearInterval(acceptTimer);
                 // acceptTimer = null;
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
