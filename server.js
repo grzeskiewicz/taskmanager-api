@@ -470,6 +470,7 @@ function importTasksDbSpecifiedDay(username, date) {
 
 //let timer;
 
+/*
 function acceptTimerCountdown(task) {
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
@@ -491,7 +492,7 @@ function acceptTimerCountdown(task) {
     } else {
         console.log("OKURWAMAĆ ######");
     }
-}
+} */
 
 
 function timerCountdown(task) {
@@ -542,11 +543,23 @@ function TaskObj(task) {
     this.acceptTimerCountdown = function (task) {
         if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
             task['status'] = 'overdue';
-              clearInterval(this.acceptTimer);
-
+            this.stopAcceptTimer();
+            updateTaskDb(task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/${task.username}-room`).emit('overdue', tasks);
+                    io.to(`/admin-room`).emit('overdue', tasks);
+                });
+            });
+            
         } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
             task['timetoaccept'] -= 5;
-            console.log(task._id, task.room,task.timetoaccept);
+            console.log(task._id, task.room, task.timetoaccept);
+            updateTaskDb(task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/${task.username}-room`).emit('countdown', tasks);
+                    io.to(`/admin-room`).emit('countdown', tasks);
+                });
+            });
 
         } else {
             console.log("OKURWAMAĆ ######");
