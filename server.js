@@ -352,7 +352,7 @@ app.post('/gettasksmonth',
 
 
 const userlist = new Set();
-const tasklist = {};
+const tasklist = [];
 
 
 
@@ -474,7 +474,7 @@ function acceptTimerCountdown(task, i) {
     console.log("acceptTimer", task.room, i);
     if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
         task['status'] = 'overdue';
-     //   clearInterval(this);
+        //   clearInterval(this);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('overdue', tasks);
@@ -492,7 +492,7 @@ function acceptTimerCountdown(task, i) {
     } else {
         console.log("OKURWAMAĆ ######")
         console.log(task);
-     //   clearInterval(this);
+        //   clearInterval(this);
 
     }
 }
@@ -528,7 +528,15 @@ function timerCountdown(task) {
 
 
 
+function TaskObj(taskData) {
+    this.timer;
+    this.acceptTimer;
+    this.task = taskData;
 
+    this.greeting = function () {
+        console.log(this.taskData);
+    };
+}
 
 io.on('connection', function (socket) {
     let timer;
@@ -568,7 +576,9 @@ io.on('connection', function (socket) {
         task['timeleft'] = 240;
         task['date'] = new Date();
 
-
+        const task1 = new TaskObj(task);
+        task1.greeting();
+        
         createTaskDb(task).then((taskDb) => {
             importTasksDb(task.username).then((tasks) => {
                 let i = 0;
@@ -595,7 +605,7 @@ io.on('connection', function (socket) {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
                 clearInterval(acceptTimer);
-               // acceptTimer = null;
+                // acceptTimer = null;
                 timer = setInterval(() => timerCountdown(task), 5000);
             });
         });
