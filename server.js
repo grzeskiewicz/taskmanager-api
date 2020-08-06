@@ -464,6 +464,16 @@ function timerCountdown(task) {
 const userlist = new Set();
 const taskList = [];
 
+tasksOnly = [];
+
+
+function prepareTasks() {
+    const tasks = tasksList.map((task, index) => {
+        return task.task;
+    })
+    console.log(tasks);
+}
+
 
 
 function createTaskDb(task) {
@@ -647,7 +657,7 @@ io.on('connection', function (socket) {
             const task1 = new TaskObj(taskDb);
             taskList.push(task1);
             task1.startAcceptTimer();
-
+            prepareTasks();
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
                 io.to(`/${task.username}-room`).emit('taskreceived', taskDb);
