@@ -526,7 +526,7 @@ function timerCountdown(task) {
 
 function findTask(id) {
     return taskList.find(element => {
-      //  console.log(String(element.task._id), String(id));
+        //  console.log(String(element.task._id), String(id));
         return String(element.task._id) === String(id)
     });
 }
@@ -547,6 +547,19 @@ function TaskObj(task) {
         this.acceptTimer = null;
     }
 
+
+    this.startTimer = function () {
+        this.timer = setInterval(() => this.timerCountdown(this.task), 5000);
+    }
+
+    this.stopTimer = function () {
+        clearInterval(this.timer);
+        this.timer = null;
+    }
+
+
+
+
     this.acceptTimerCountdown = function (task) {
         if (task['timetoaccept'] === 0 && task['status'] === 'new') { //? status=overdue?
             task['status'] = 'overdue';
@@ -560,7 +573,7 @@ function TaskObj(task) {
 
         } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
             task['timetoaccept'] -= 5;
-            console.log(task._id, task.room, task.timetoaccept);
+      //      console.log(task._id, task.room, task.timetoaccept);
             updateTaskDb(task).then(() => {
                 importTasksDb(task.username).then((tasks) => {
                     io.to(`/${task.username}-room`).emit('countdown', tasks);
@@ -575,11 +588,11 @@ function TaskObj(task) {
 
 
     this.timerCountdown = function (task) {
-        console.log("Countdown timer - task", task.room);
         if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
             task['status'] = 'timeup';
         } else if (task['timeleft'] > 0 && task['status'] === 'pending') {
             task['timeleft'] -= 5;
+            console.log("Countdown", task.timeleft, task._id);
         } else {
             console.log("OKURWA MAĆ")
             //            clearInterval(this);
@@ -648,18 +661,19 @@ io.on('connection', function (socket) {
     });
 
     socket.on('accept', function (task) {
-       // task['status'] = 'pending';
+        // task['status'] = 'pending';
         const foundTask = findTask(task._id);
-        console.log("?eee",taskList.foundTask);
-        foundTask.task.status='pending';
+        foundTask.task.status = 'pending';
         updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
+                fountTask.stopAcceptTimer();
+                foundTask.startTimer();
                 //  clearInterval(acceptTimer);
                 // acceptTimer = null;
                 //timer = setInterval(() => timerCountdown(task), 5000);
-               // console.log(taskList);
+                // console.log(taskList);
             });
         });
 
