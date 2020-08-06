@@ -527,7 +527,7 @@ function timerCountdown(task) {
 function findTask(id) {
     console.log(id);
     for(const el of taskList){
-        console.log(el);
+        console.log(el.task);
     }
     return taskList.find(element => element.task._id === id);
 }
