@@ -534,7 +534,7 @@ function TaskObj(taskData) {
     this.task = taskData;
 
     this.greeting = function () {
-        console.log(this.taskData);
+        console.log("TaskObj",this.taskData);
     };
 }
 
@@ -578,7 +578,7 @@ io.on('connection', function (socket) {
 
         const task1 = new TaskObj(task);
         task1.greeting();
-        
+
         createTaskDb(task).then((taskDb) => {
             importTasksDb(task.username).then((tasks) => {
                 let i = 0;
