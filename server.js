@@ -573,7 +573,6 @@ function TaskObj(task) {
 
         } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
             task['timetoaccept'] -= 5;
-      //      console.log(task._id, task.room, task.timetoaccept);
             updateTaskDb(task).then(() => {
                 importTasksDb(task.username).then((tasks) => {
                     io.to(`/${task.username}-room`).emit('countdown', tasks);
@@ -590,12 +589,23 @@ function TaskObj(task) {
     this.timerCountdown = function (task) {
         if (task['timeleft'] === 0 && task['status'] === 'pending') { // ? status timeup?
             task['status'] = 'timeup';
+            updateTaskDb(task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/admin-room`).emit('timeup', tasks);
+                    io.to(`/${task.username}-room`).emit('timeup', tasks);
+                    this.stopTimer();
+                });
+            });
         } else if (task['timeleft'] > 0 && task['status'] === 'pending') {
             task['timeleft'] -= 5;
-            console.log("Countdown", task.timeleft, task._id);
+            updateTaskDb(task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/${task.username}-room`).emit('countdown', tasks);
+                    io.to(`/admin-room`).emit('countdown', tasks);
+                });
+            });
         } else {
             console.log("OKURWA MAĆ")
-            //            clearInterval(this);
         }
     }
 
@@ -682,21 +692,15 @@ io.on('connection', function (socket) {
 
     socket.on('finish', function (task) {
         // task['timeleft'] = 0;
-        task['status'] = 'done';
-        updateTaskDb(task).then(() => {
-            console.log("Finish update db", task);
+        const foundTask = findTask(task._id);
+        foundTask.task.status = 'done';
+        updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
-                console.log("Finish import", tasks);
                 io.to(`/admin-room`).emit('userfinished', tasks);
                 io.to(`/${task.username}-room`).emit('userfinished', tasks);
-                clearInterval(timer);
-                timer = null;
+                foundTask.stopTimer();
             });
         });
-
-
-
-
     });
 
 
