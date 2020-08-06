@@ -525,10 +525,7 @@ function timerCountdown(task) {
 
 
 function findTask(id) {
-    for(const el of taskList){
-        console.log(typeof el.task._id,typeof id);
-    }
-    return taskList.find(element => element.task._id === id);
+    return taskList.find(element => Number(element.task._id) === Number(id));
 }
 
 function TaskObj(task) {
@@ -650,12 +647,12 @@ io.on('connection', function (socket) {
     socket.on('accept', function (task) {
         task['status'] = 'pending';
         const foundTask = findTask(task._id);
-        console.log("found task",foundTask,task._id);
+        console.log("found task", foundTask, task._id);
         updateTaskDb(task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
                 io.to(`/admin-room`).emit('countdown', tasks);
-              //  clearInterval(acceptTimer);
+                //  clearInterval(acceptTimer);
                 // acceptTimer = null;
                 //timer = setInterval(() => timerCountdown(task), 5000);
             });
