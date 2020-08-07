@@ -686,6 +686,7 @@ io.on('connection', function (socket) {
                 const task1 = new TaskObj(taskDb);
                 taskList.push(task1);
                 foundTask = task1;
+                console.log(taskDb,task1);
                 foundTask.task.status = 'pending';
 
             });
