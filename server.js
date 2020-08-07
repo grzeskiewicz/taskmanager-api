@@ -533,7 +533,7 @@ function importTasksDb(username) {
 
 
 function importTasksByID(id) {
-    return Task.find({
+    return Task.findOne({
         _id: id,
     }).then(task => task)
         .catch(() => {
