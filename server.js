@@ -680,7 +680,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('accept', function (task) {
-        const foundTask = findTask(task._id);
+        let foundTask = findTask(task._id);
         if (foundTask === undefined) {
             importTasksByID(task._id).then((taskDb) => {
                 const task1 = new TaskObj(taskDb);
