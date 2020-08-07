@@ -534,7 +534,7 @@ function importTasksDb(username) {
 
 function importTasksByID(id) {
     console.log(id);
-    Task.find({
+    return Task.find({
         _id: id,
     }).then(task => {console.log(task);return task;})
         .catch(() => {
@@ -626,7 +626,6 @@ function TaskObj(task) {
 }
 
 io.on('connection', function (socket) {
-    let timer;
     console.log('a user connected');
     socket.on('disconnect', function () {
         console.log('user disconnected');
@@ -635,7 +634,6 @@ io.on('connection', function (socket) {
 
     socket.on('logged', function (user) {
         if (user !== 'admin') {
-            // if (!taskList[user]) taskList[user] = [];
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
             userlist.add(user);
