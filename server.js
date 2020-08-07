@@ -664,7 +664,7 @@ io.on('connection', function (socket) {
             const task1 = new TaskObj(taskDb);
             taskList.push(task1);
             task1.startAcceptTimer();
-            console.log("Create",task1);
+            console.log("Create", task1);
             prepareTasks();
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
@@ -687,20 +687,12 @@ io.on('connection', function (socket) {
                 const task1 = new TaskObj(taskDb);
                 taskList.push(task1);
                 foundTask = task1;
-                console.log(task1);
-                foundTask.task.status = 'pending';
-                updateTaskDb(foundTask.task).then(() => {
-                    importTasksDb(task.username).then((tasks) => {
-                        io.to(`/${task.username}-room`).emit('countdown', tasks);
-                        io.to(`/admin-room`).emit('countdown', tasks);
-                        //foundTask.stopAcceptTimer();
-                        foundTask.startTimer();
-                    });
-                });
             });
-        } else {
-            console.log("2?");
+        }
+
+        if (foundTask !== undefined) {
             foundTask.task.status = 'pending';
+
             updateTaskDb(foundTask.task).then(() => {
                 importTasksDb(task.username).then((tasks) => {
                     io.to(`/${task.username}-room`).emit('countdown', tasks);
@@ -709,7 +701,9 @@ io.on('connection', function (socket) {
                     foundTask.startTimer();
                 });
             });
+
         }
+
 
 
 
