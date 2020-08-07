@@ -531,6 +531,18 @@ function importTasksDb(username) {
 }
 
 
+
+function importTasksByID(id) {
+    Task.find({
+        _id: id,
+    }).then(task => task)
+        .catch(() => {
+            console.log({
+                'msg': 'Sorry! Something went wrong.'
+            });
+        });
+}
+
 function findTask(id) {
     return taskList.find(element => String(element.task._id) === String(id));
 }
@@ -671,7 +683,12 @@ io.on('connection', function (socket) {
 
     socket.on('accept', function (task) {
         const foundTask = findTask(task._id);
-        foundTask.task.status = 'pending';
+        if (foundTask === undefined) {
+            const imported = importTasksByID(task._id);
+            console.log("Imported",imported);
+        } else {
+            foundTask.task.status = 'pending';
+        }
         updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/${task.username}-room`).emit('countdown', tasks);
