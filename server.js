@@ -664,6 +664,7 @@ io.on('connection', function (socket) {
             const task1 = new TaskObj(taskDb);
             taskList.push(task1);
             task1.startAcceptTimer();
+            console.log("Create",task1);
             prepareTasks();
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
@@ -686,7 +687,7 @@ io.on('connection', function (socket) {
                 const task1 = new TaskObj(taskDb);
                 taskList.push(task1);
                 foundTask = task1;
-                console.log(taskDb, task1);
+                console.log(task1);
                 foundTask.task.status = 'pending';
                 updateTaskDb(foundTask.task).then(() => {
                     importTasksDb(task.username).then((tasks) => {
