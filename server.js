@@ -686,21 +686,30 @@ io.on('connection', function (socket) {
                 const task1 = new TaskObj(taskDb);
                 taskList.push(task1);
                 foundTask = task1;
-                console.log(taskDb,task1);
+                console.log(taskDb, task1);
                 foundTask.task.status = 'pending';
-
+                updateTaskDb(foundTask.task).then(() => {
+                    importTasksDb(task.username).then((tasks) => {
+                        io.to(`/${task.username}-room`).emit('countdown', tasks);
+                        io.to(`/admin-room`).emit('countdown', tasks);
+                        //foundTask.stopAcceptTimer();
+                        foundTask.startTimer();
+                    });
+                });
             });
         } else {
+            console.log("2?");
             foundTask.task.status = 'pending';
-        }
-        updateTaskDb(foundTask.task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/${task.username}-room`).emit('countdown', tasks);
-                io.to(`/admin-room`).emit('countdown', tasks);
-                foundTask.stopAcceptTimer();
-                foundTask.startTimer();
+            updateTaskDb(foundTask.task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/${task.username}-room`).emit('countdown', tasks);
+                    io.to(`/admin-room`).emit('countdown', tasks);
+                    foundTask.stopAcceptTimer();
+                    foundTask.startTimer();
+                });
             });
-        });
+        }
+
 
 
     });
