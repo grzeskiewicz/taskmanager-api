@@ -533,10 +533,9 @@ function importTasksDb(username) {
 
 
 function importTasksByID(id) {
-    console.log(id);
     return Task.find({
         _id: id,
-    }).then(task => { console.log(task); return task; })
+    }).then(task => task)
         .catch(() => {
             console.log({
                 'msg': 'Sorry! Something went wrong.'
@@ -683,21 +682,25 @@ io.on('connection', function (socket) {
     socket.on('accept', function (task) {
         const foundTask = findTask(task._id);
         if (foundTask === undefined) {
-            importTasksByID(task._id).then((taskx) => {
-                console.log(taskx);
+            importTasksByID(task._id).then((taskDb) => {
+                const task1 = new TaskObj(taskDb);
+                taskList.push(task1);
+                foundTask = task1;
+                foundTask.task.status = 'pending';
+
             });
         } else {
             foundTask.task.status = 'pending';
-
-            updateTaskDb(foundTask.task).then(() => {
-                importTasksDb(task.username).then((tasks) => {
-                    io.to(`/${task.username}-room`).emit('countdown', tasks);
-                    io.to(`/admin-room`).emit('countdown', tasks);
-                    foundTask.stopAcceptTimer();
-                    foundTask.startTimer();
-                });
-            });
         }
+        updateTaskDb(foundTask.task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/${task.username}-room`).emit('countdown', tasks);
+                io.to(`/admin-room`).emit('countdown', tasks);
+                foundTask.stopAcceptTimer();
+                foundTask.startTimer();
+            });
+        });
+
 
     });
 
