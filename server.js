@@ -533,9 +533,10 @@ function importTasksDb(username) {
 
 
 function importTasksByID(id) {
+    console.log(id);
     Task.find({
         _id: id,
-    }).then(task => task)
+    }).then(task => {console.log(task);return task;})
         .catch(() => {
             console.log({
                 'msg': 'Sorry! Something went wrong.'
