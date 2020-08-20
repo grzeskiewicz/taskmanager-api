@@ -683,7 +683,7 @@ io.on('connection', function (socket) {
     socket.on('accept', function (task) {
         let foundTask = findTask(task._id);
         if (foundTask === undefined) {
-            importTasksByID(task._id).then((taskDb) => {
+            importTasksByID(task._id).then((taskDb) => { //securing in case of losing connection - tasklist empties after reset
                 const task1 = new TaskObj(taskDb);
                 taskList.push(task1);
                 foundTask = task1;
@@ -692,7 +692,6 @@ io.on('connection', function (socket) {
 
         if (foundTask !== undefined) {
             foundTask.task.status = 'pending';
-
             updateTaskDb(foundTask.task).then(() => {
                 importTasksDb(task.username).then((tasks) => {
                     io.to(`/${task.username}-room`).emit('countdown', tasks);
@@ -740,17 +739,27 @@ io.on('connection', function (socket) {
 
     socket.on('reset', function (task) {
         const foundTask = findTask(task._id);
-        foundTask.task.status = 'pending';
-        foundTask.task.timetoaccept = 60;
-        foundTask.task.timeleft = 240;
-        updateTaskDb(foundTask.task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/admin-room`).emit('reset', tasks);
-                io.to(`/${task.username}-room`).emit('reset', tasks);
-                foundTask.startTimer();
-            });
-        });
 
+        if (foundTask === undefined) {
+            importTasksByID(task._id).then((taskDb) => { //securing in case of losing connection - tasklist empties after reset
+                const task1 = new TaskObj(taskDb);
+                taskList.push(task1);
+                foundTask = task1;
+            });
+        }
+
+        if (foundTask !== undefined) {
+            foundTask.task.status = 'pending';
+            foundTask.task.timetoaccept = 60;
+            foundTask.task.timeleft = 240;
+            updateTaskDb(foundTask.task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/admin-room`).emit('reset', tasks);
+                    io.to(`/${task.username}-room`).emit('reset', tasks);
+                    foundTask.startTimer();
+                });
+            });
+        }
     });
 
 
