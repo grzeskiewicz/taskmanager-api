@@ -710,7 +710,7 @@ io.on('connection', function (socket) {
 
 
     socket.on('finish', function (task) {
-        const foundTask = findTask(task._id);
+        let foundTask = findTask(task._id);
         foundTask.task.status = 'done';
         updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
@@ -724,7 +724,7 @@ io.on('connection', function (socket) {
 
 
     socket.on('cancel', function (task) {
-        const foundTask = findTask(task._id);
+        let foundTask = findTask(task._id);
         foundTask.task.status = 'cancelled';
         updateTaskDb(foundTask.task).then(() => {
             importTasksDb(task.username).then((tasks) => {
@@ -738,7 +738,7 @@ io.on('connection', function (socket) {
 
 
     socket.on('reset', function (task) {
-        const foundTask = findTask(task._id);
+        let foundTask = findTask(task._id);
 
         if (foundTask === undefined) {
             importTasksByID(task._id).then((taskDb) => { //securing in case of losing connection - tasklist empties after reset
