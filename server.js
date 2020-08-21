@@ -1,11 +1,12 @@
 require('dotenv').config();
-//require('./database/User');
-//require('./database/Task');
+require('./database/User');
+require('./database/Task');
 var jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 var express = require('express'),
     app = express();
-
+var cors = require('cors');
+app.use(cors());
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const {
@@ -23,7 +24,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies 
-//const User = mongoose.model('User');
+const User = mongoose.model('User');
+const Task = mongoose.model('Task');
 const auth = require('http-auth');
 
 const basic = auth.basic({
@@ -45,6 +47,307 @@ mongoose.connection
 
 
 
+app.options('*', cors()) // include before other routes
+
+app.get('/', function (req, res) {
+    let date = new Date();
+    res.send(date);
+
+});
+
+
+app.post('/createuser', [
+    body('username')
+        .isLength({
+            min: 1
+        })
+        .withMessage('Please put content'),
+],
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const data = req.body;
+            const date = new Date();
+
+            const user = new User({
+                'username': data.username,
+                'password': data.password,
+                'date': date,
+                'role': data.role
+            });
+            user.save()
+                .then(() => {
+                    io.to(`/admin-room`).emit('userlist', {
+                        userlist: Array.from(userlist)
+                    });
+                    res.json({
+                        'success': true,
+                        'msg': 'Saved'
+                    })
+                })
+                .catch((err) => {
+                    // console.log(err);
+                    res.json({
+                        'success': false,
+                        'msg': 'Sorry! Something went wrong.'
+                    });
+                });
+
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
+
+
+app.post('/resetpassword',
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const user = req.body;
+            console.log(user);
+            User.findOne({
+                username: user.username,
+            }, function (err, userRecord) {
+                if (err) throw err;
+                if (userRecord) {
+                    userRecord.set({
+                        password: user.password
+                    });
+                    userRecord.save()
+                        .then(() => {
+                            // console.log('Updated password');
+                            res.json({
+                                'success': true,
+                                'msg': 'Password changed nicely'
+                            });
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                } else {
+                    //res.json({ success: false, msg: "No such user registered" });
+                }
+
+            });
+
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
+
+app.post('/deleteuser',
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const user = req.body;
+            User.findOneAndDelete({
+                username: user.user,
+            }, function (err) {
+                if (err) { throw err } else {
+                    userlist.delete(user);
+                    io.to(`/admin-room`).emit('userlist', {
+                        userlist: Array.from(userlist)
+                    });
+                    res.json({
+                        'success': true,
+                        'msg': 'User deleted!'
+                    });
+                }
+            });
+
+
+
+
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
+
+
+app.get('/getusers', (req, res) => {
+    User.find()
+        .then((users) => {
+            const usernames = [];
+            for (const user of users) if (user.username !== "admin") usernames.push(user.username);
+            res.json(usernames);
+            // console.log(usernames);
+        })
+        .catch(() => {
+            res.json({
+                'msg': 'Sorry! Something went wrong.'
+            });
+        });
+});
+
+
+app.post('/authuser', [
+    body('username')
+        .isLength({
+            min: 1
+        })
+        .withMessage('Please put content'),
+    body('password')
+        .isLength({
+            min: 1
+        })
+        .withMessage('Please put content')
+],
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const data = req.body;
+            // console.log(data);
+            User.findOne({
+                username: data.username
+            }, function (err, user) {
+                if (!user) {
+                    res.json({ success: false, msg: 'No such user!' });
+                    return;
+                };
+                // test a matching password
+                user.comparePassword(data.password, function (err, isMatch) {
+                    if (err) {
+                        res.json({ success: false, msg: 'Wrong password!' })
+                    }
+                    if (isMatch) {
+                        res.json({
+                            success: true,
+                            msg: 'Credentials are ok',
+                            token: 'JWT ' + jwt.sign({
+                                username: user.username,
+                                id: user._id,
+                                role: user.role
+                            }, 'RESTFULAPIs')
+                        });
+                    } else {
+                        res.json({ success: false, msg: 'Wrong password!' })
+                        return;
+                    }
+                });
+            });
+
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
+
+app.get('/memberinfo', (req, res) => {
+    //console.log(req.headers);
+    if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function (err, decode) {
+            // console.log("DECODE: ");
+            //console.log(decode);
+            if (err) req.user = undefined;
+            if (decode === undefined) {
+                res.json({
+                    success: false,
+                    msg: "No token"
+                });
+            }
+
+            User.findOne({
+                username: decode.username
+            }, function (err, user) {
+                if (err) throw err;
+                if (user) {
+                    res.json({
+                        success: true,
+                        msg: decode.username,
+                        role: decode.role
+                    });
+                } else {
+                    res.json({
+                        success: false,
+                        msg: "No such user registered"
+                    });
+                }
+
+            });
+            req.user = decode; //?
+        });
+    } else {
+        res.json({
+            success: false,
+            msg: "Token not provided"
+        });
+        req.user = undefined;
+    }
+});
+
+
+
+app.post('/gettasksday',
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            const selectedDay = req.body.date;
+            const day = new Date(Date.parse(selectedDay));
+            const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
+            const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
+            Task.find({
+                date: {
+                    $gt: dayBeginning,
+                    $lt: dayEnd
+                }
+            })
+                .then((tasks) => {
+                    res.json({ tasks: tasks });
+                })
+                .catch(() => {
+                    console.log({
+                        'msg': 'Sorry! Something went wrong.'
+                    });
+                });
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
+
+
+
+
+app.post('/gettasksmonth',
+    (req, res) => {
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            //  const selectedDay = req.body.date;
+            //  const day = new Date(Date.parse(selectedDay));
+            const year = req.body.year;
+            const month = req.body.month;
+            const firstDayBeginning = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            //  const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
+            const lastDayEnd = new Date(lastDay.getTime() + 60 * 60 * 24 * 1000);
+
+            Task.find({
+                date: {
+                    $gt: firstDayBeginning,
+                    $lt: lastDayEnd
+                }
+            })
+                .then((tasks) => {
+                    res.json({ tasks: tasks });
+                })
+                .catch(() => {
+                    console.log({
+                        'msg': 'Sorry! Something went wrong.'
+                    });
+                });
+        } else {
+            res.send('Chuj!');
+        }
+    }
+);
 
 
 //==========================================================================================================================
@@ -124,6 +427,7 @@ function acceptTimerCountdown(task) {
             });
         });
     } else {
+        console.log("OKURWAMAĆ ######");
     }
 } */
 
@@ -150,6 +454,7 @@ function timerCountdown(task) {
         });
 
     } else {
+        console.log("OKURWA MAĆ")
         clearInterval(this);
     }
 } */
@@ -289,6 +594,7 @@ function TaskObj(task) {
                 });
             });
         } else {
+            console.log("OKURWAMAĆ ######");
         }
     }
 
@@ -312,6 +618,7 @@ function TaskObj(task) {
                 });
             });
         } else {
+            console.log("OKURWA MAĆ")
         }
     }
 
@@ -396,29 +703,22 @@ io.on('connection', function (socket) {
 
         }
 
+
+
+
     });
 
 
     socket.on('finish', function (task) {
         let foundTask = findTask(task._id);
-        if (foundTask === undefined) {
-            importTasksByID(task._id).then((taskDb) => { //securing in case of losing connection - tasklist empties after reset
-                const task1 = new TaskObj(taskDb);
-                taskList.push(task1);
-                foundTask = task1;
+        foundTask.task.status = 'done';
+        updateTaskDb(foundTask.task).then(() => {
+            importTasksDb(task.username).then((tasks) => {
+                io.to(`/admin-room`).emit('userfinished', tasks);
+                io.to(`/${task.username}-room`).emit('userfinished', tasks);
+                foundTask.stopTimer();
             });
-        }
-
-        if (foundTask !== undefined) {
-            foundTask.task.status = 'done';
-            updateTaskDb(foundTask.task).then(() => {
-                importTasksDb(task.username).then((tasks) => {
-                    io.to(`/admin-room`).emit('userfinished', tasks);
-                    io.to(`/${task.username}-room`).emit('userfinished', tasks);
-                    foundTask.stopTimer();
-                });
-            });
-        }
+        });
     });
 
 
@@ -498,4 +798,4 @@ var port = process.env.PORT || 8080,
 http.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
 
-module.exports = {io,app,userlist};
+module.exports = app;
