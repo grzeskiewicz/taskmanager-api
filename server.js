@@ -25,7 +25,6 @@ app.use(bodyParser.urlencoded({
 })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies 
 //const User = mongoose.model('User');
-const Task = mongoose.model('Task');
 const auth = require('http-auth');
 
 const basic = auth.basic({
