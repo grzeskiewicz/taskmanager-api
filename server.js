@@ -703,22 +703,29 @@ io.on('connection', function (socket) {
 
         }
 
-
-
-
     });
 
 
     socket.on('finish', function (task) {
         let foundTask = findTask(task._id);
-        foundTask.task.status = 'done';
-        updateTaskDb(foundTask.task).then(() => {
-            importTasksDb(task.username).then((tasks) => {
-                io.to(`/admin-room`).emit('userfinished', tasks);
-                io.to(`/${task.username}-room`).emit('userfinished', tasks);
-                foundTask.stopTimer();
+        if (foundTask === undefined) {
+            importTasksByID(task._id).then((taskDb) => { //securing in case of losing connection - tasklist empties after reset
+                const task1 = new TaskObj(taskDb);
+                taskList.push(task1);
+                foundTask = task1;
             });
-        });
+        }
+
+        if (foundTask !== undefined) {
+            foundTask.task.status = 'done';
+            updateTaskDb(foundTask.task).then(() => {
+                importTasksDb(task.username).then((tasks) => {
+                    io.to(`/admin-room`).emit('userfinished', tasks);
+                    io.to(`/${task.username}-room`).emit('userfinished', tasks);
+                    foundTask.stopTimer();
+                });
+            });
+        }
     });
 
 
