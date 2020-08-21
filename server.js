@@ -5,8 +5,7 @@ var jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 var express = require('express'),
     app = express();
-var cors = require('cors');
-app.use(cors());
+
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const {

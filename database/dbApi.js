@@ -1,9 +1,11 @@
 import {app,io,userlist} from 'server';
 require('./database/User');
 require('./database/Task');
+const mongoose = require('mongoose');
 const Task = mongoose.model('Task');
 const User = mongoose.model('User');
-
+var cors = require('cors');
+app.use(cors());
 const {
     body,
     validationResult
@@ -163,6 +165,7 @@ app.post('/authuser', [
         .withMessage('Please put content')
 ],
     (req, res) => {
+        console.log("HEHEŁKIxDDD");
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const data = req.body;
