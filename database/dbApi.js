@@ -2,6 +2,7 @@ import {app,io,userlist} from 'server';
 require('./database/User');
 require('./database/Task');
 const Task = mongoose.model('Task');
+const User = mongoose.model('User');
 
 const {
     body,
