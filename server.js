@@ -1,19 +1,19 @@
 require('dotenv').config();
 require('./database/User');
 require('./database/Task');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
-var express = require('express'),
+const express = require('express'),
     app = express();
-var cors = require('cors');
+const cors = require('cors');
 app.use(cors());
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 const {
     body,
     validationResult
 } = require('express-validator/check');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const path = require('path');
 /*var corsOptions = {  //for reacts js 
   origin: 'http://localhost:3000',
@@ -86,7 +86,6 @@ app.post('/createuser', [
                     })
                 })
                 .catch((err) => {
-                    // console.log(err);
                     res.json({
                         'success': false,
                         'msg': 'Sorry! Something went wrong.'
@@ -158,10 +157,6 @@ app.post('/deleteuser',
                     });
                 }
             });
-
-
-
-
         } else {
             res.send('Chuj!');
         }
@@ -176,7 +171,6 @@ app.get('/getusers', (req, res) => {
             const usernames = [];
             for (const user of users) if (user.username !== "admin") usernames.push(user.username);
             res.json(usernames);
-            // console.log(usernames);
         })
         .catch(() => {
             res.json({
@@ -233,7 +227,7 @@ app.post('/authuser', [
             });
 
         } else {
-            res.send('Chuj!');
+            res.json({ success: false, msg: "Unknown error!" });
         }
     }
 );
@@ -243,8 +237,6 @@ app.get('/memberinfo', (req, res) => {
     //console.log(req.headers);
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
         jwt.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', function (err, decode) {
-            // console.log("DECODE: ");
-            //console.log(decode);
             if (err) req.user = undefined;
             if (decode === undefined) {
                 res.json({
@@ -307,7 +299,7 @@ app.post('/gettasksday',
                     });
                 });
         } else {
-            res.send('Chuj!');
+            res.json({ 'errors': errors });
         }
     }
 );
@@ -344,7 +336,7 @@ app.post('/gettasksmonth',
                     });
                 });
         } else {
-            res.send('Chuj!');
+            res.json({'errors': errors});
         }
     }
 );
@@ -594,7 +586,7 @@ function TaskObj(task) {
                 });
             });
         } else {
-            console.log("OKURWAMAĆ ######");
+            console.log("Error acceptTimer");
         }
     }
 
@@ -618,7 +610,7 @@ function TaskObj(task) {
                 });
             });
         } else {
-            console.log("OKURWA MAĆ")
+            console.log("Error timerCountdown")
         }
     }
 
@@ -664,7 +656,6 @@ io.on('connection', function (socket) {
             const task1 = new TaskObj(taskDb);
             taskList.push(task1);
             task1.startAcceptTimer();
-            console.log("Create", task1);
             prepareTasks();
             importTasksDb(task.username).then((tasks) => {
                 io.to(`/admin-room`).emit('usertasks', tasks);
@@ -702,10 +693,6 @@ io.on('connection', function (socket) {
             });
 
         }
-
-
-
-
     });
 
 
@@ -773,7 +760,6 @@ io.on('connection', function (socket) {
         });
         io.to(`/admin-room`).emit('userlogout', { username: user });
         //socket.disconnect();
-
     });
 
 
@@ -792,7 +778,7 @@ io.on('connection', function (socket) {
 
 
 
-var port = process.env.PORT || 8080,
+const port = process.env.PORT || 8080,
     ip = process.env.IP || '0.0.0.0';
 
 http.listen(port, ip);
