@@ -778,8 +778,8 @@ io.on('connection', function (socket) {
 
 
 
-const port = process.env.PORT || 8080,
-    ip = process.env.IP || '0.0.0.0';
+const port = process.env.PORT || 3001,
+    ip = process.env.IP || '127.0.0.1';
 
 http.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
