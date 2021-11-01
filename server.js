@@ -3,27 +3,34 @@ require('./database/User');
 require('./database/Task');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+
 const express = require('express'),
     app = express();
 const cors = require('cors');
 app.use(cors());
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+
+const http = require('http');
+const server = http.createServer(app);
+const socketIo = require("socket.io");
+
+const io = socketIo(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    }
+});
+
+
 const {
     body,
     validationResult
 } = require('express-validator/check');
-const bodyParser = require('body-parser');
 const path = require('path');
-/*var corsOptions = {  //for reacts js 
-  origin: 'http://localhost:3000',
-  credentials:true,
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}*/
-app.use(bodyParser.urlencoded({
-    extended: true
-})); // support encoded bodies
-app.use(bodyParser.json()); // support json encoded bodies 
+
+
+
 const User = mongoose.model('User');
 const Task = mongoose.model('Task');
 const auth = require('http-auth');
@@ -336,7 +343,7 @@ app.post('/gettasksmonth',
                     });
                 });
         } else {
-            res.json({'errors': errors});
+            res.json({ 'errors': errors });
         }
     }
 );
@@ -482,13 +489,38 @@ function createTaskDb(task) {
 }
 
 
-function updateTaskDb(task) {
-    return Task.findOne({
+async function updateTaskDb(task) {
+    const q = await Task.findOneAndUpdate({
         username: task.username,
         room: task.room,
         content: task.content,
         date: task.date
-    }, function (err, taskDb) {
+    },
+        {
+            status: task.status,
+            timetoaccept: task.timetoaccept,
+            timeleft: task.timeleft
+        }
+    );
+
+    /*
+    await q.clone();
+   // const k = await q.clone();
+    if (q) {
+        console.log(q);
+        //const k = await q.clone();
+        if (k) {
+            k.set({
+                status: task.status,
+                timetoaccept: task.timetoaccept,
+                timeleft: task.timeleft
+            });
+            return q.save();
+        }
+    }
+
+    
+    , function (err, taskDb) {
         if (err) throw err;
         if (taskDb) {
             taskDb.set({
@@ -501,7 +533,7 @@ function updateTaskDb(task) {
             console.log("Task not found?");
         }
 
-    });
+    });*/
 }
 
 function importTasksDb(username) {
@@ -580,6 +612,7 @@ function TaskObj(task) {
         } else if (task['timetoaccept'] > 0 && task['status'] === 'new') {
             task['timetoaccept'] -= 5;
             updateTaskDb(task).then(() => {
+                console.log("TUTAJ")
                 importTasksDb(task.username).then((tasks) => {
                     io.to(`/${task.username}-room`).emit('countdown', tasks);
                     io.to(`/admin-room`).emit('countdown', tasks);
@@ -624,6 +657,7 @@ io.on('connection', function (socket) {
 
 
     socket.on('logged', function (user) {
+        console.log(user)
         if (user !== 'admin') {
             console.log('someone connected', user);
             socket.join(`/${user}-room`);
@@ -653,6 +687,7 @@ io.on('connection', function (socket) {
         task['date'] = new Date();
 
         createTaskDb(task).then((taskDb) => {
+            //console.log(taskDb);
             const task1 = new TaskObj(taskDb);
             taskList.push(task1);
             task1.startAcceptTimer();
@@ -781,7 +816,7 @@ io.on('connection', function (socket) {
 const port = process.env.PORT || 3001,
     ip = process.env.IP || '127.0.0.1';
 
-http.listen(port, ip);
+server.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app;
