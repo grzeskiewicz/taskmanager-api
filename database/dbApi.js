@@ -21,23 +21,24 @@ app.get('/', function (req, res) {
     res.send(date);
 
 });
-
-
-app.post('/createuser', [
+/*
+[
     body('username')
         .isLength({
             min: 1
         })
         .withMessage('Please put content'),
-],
-    (req, res) => {
+],*/
+
+app.post('/createuser', (req, res) => {
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const data = req.body;
             const date = new Date();
-
             const user = new User({
                 'username': data.username,
+                'name':data.name,
+                'surname': data.surname,
                 'password': data.password,
                 'date': date,
                 'role': data.role

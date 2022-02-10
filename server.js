@@ -4,6 +4,7 @@ require("./database/Task");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
+
 const express = require("express"),
   app = express();
 const cors = require("cors");
@@ -64,16 +65,15 @@ app.post(
     if (errors.isEmpty()) {
       const data = req.body;
       const date = new Date();
-
       const user = new User({
         username: data.username,
+        name:data.name,
+        surname: data.surname,
         password: data.password,
         date: date,
         role: data.role,
       });
-      user
-        .save()
-        .then(() => {
+      user.save().then(() => {
           io.to(`/admin-room`).emit("userlist", {
             userlist: Array.from(userlist),
           });
@@ -290,7 +290,7 @@ app.post("/gettasksday", (req, res) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
     const selectedDay = req.body.date;
-    const day = new Date(Date.parse(selectedDay));
+    const day = new Date(selectedDay);
     const dayBeginning = new Date(day.setHours(0, 0, 0, 0));
     const dayEnd = new Date(dayBeginning.getTime() + 60 * 60 * 24 * 1000);
     Task.find({
